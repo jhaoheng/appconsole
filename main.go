@@ -33,12 +33,10 @@ func main() {
 	//
 	myWindow := myApp.NewWindow(Title)
 	myWindow.SetMainMenu(mainmenu.MakeMenu(myApp, myWindow))
-	myWindow.SetMaster()
-
-	//
 	myWindow.Resize(fyne.NewSize(1200, 750))
 	myWindow.CenterOnScreen()
 	myWindow.SetContent(view.MainContainer(myWindow))
+	myWindow.SetMaster()
 	myWindow.Hide()
 
 	//
@@ -47,12 +45,13 @@ func main() {
 	loginWindow.CenterOnScreen()
 	loginWindow.SetContent(view.LoginContent(myWindow))
 	loginWindow.SetFixedSize(true)
+	loginWindow.SetMaster()
 	loginWindow.Show()
 
 	//
 	go func() {
 		<-view.LoginSuccess
-		loginWindow.Close()
+		loginWindow.Hide()
 		myWindow.Show()
 	}()
 

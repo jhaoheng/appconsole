@@ -37,23 +37,27 @@ func main() {
 	myWindow.CenterOnScreen()
 	myWindow.SetContent(view.MainContainer(myWindow))
 	myWindow.SetMaster()
-	myWindow.Hide()
 
 	//
-	loginWindow := myApp.NewWindow("login")
-	loginWindow.Resize(fyne.NewSize(300, 150))
-	loginWindow.CenterOnScreen()
-	loginWindow.SetContent(view.LoginContent(myWindow))
-	loginWindow.SetFixedSize(true)
-	loginWindow.SetMaster()
-	loginWindow.Show()
-
-	//
-	go func() {
-		<-view.LoginSuccess
-		loginWindow.Hide()
+	if myApp.Preferences().Bool("remember_me") {
 		myWindow.Show()
-	}()
+	} else {
+		myWindow.Hide()
+		//
+		loginWindow := myApp.NewWindow("login")
+		loginWindow.Resize(fyne.NewSize(400, 150))
+		loginWindow.CenterOnScreen()
+		loginWindow.SetContent(view.LoginContent(loginWindow))
+		loginWindow.SetFixedSize(true)
+		loginWindow.SetMaster()
+		loginWindow.Show()
+		//
+		go func() {
+			<-view.LoginSuccess
+			loginWindow.Hide()
+			myWindow.Show()
+		}()
+	}
 
 	//
 	myApp.Run()

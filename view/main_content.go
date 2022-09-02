@@ -20,17 +20,21 @@ func MainContainer(myWindow fyne.Window) fyne.CanvasObject {
 	presentContent := view_content.NewContent()
 
 	// 左邊框架
-	myLeftCanvas := buildLeftCanvas(func(v index.ViewInfo) {
-		// 更新 content
-		presentContent.ContentTitle.SetText(v.Title)
-		presentContent.ContentIntro.SetText(v.Intro)
-		if v.View != nil {
-			presentContent.Content.Objects = []fyne.CanvasObject{v.View(myWindow)}
-		} else {
-			presentContent.Content.Objects = []fyne.CanvasObject{}
-		}
-		presentContent.Content.Refresh()
-	}, true)
+	myLeftCanvas := buildLeftCanvas(
+		myWindow,
+		func(v index.ViewInfo) {
+			// 更新 content
+			presentContent.ContentTitle.SetText(v.Title)
+			presentContent.ContentIntro.SetText(v.Intro)
+			if v.View != nil {
+				presentContent.Content.Objects = []fyne.CanvasObject{v.View(myWindow)}
+			} else {
+				presentContent.Content.Objects = []fyne.CanvasObject{}
+			}
+			presentContent.Content.Refresh()
+		},
+		true,
+	)
 	//
 	split := container.NewHSplit(myLeftCanvas, presentContent.GetCanvas())
 	split.Offset = 0.2
@@ -39,7 +43,7 @@ func MainContainer(myWindow fyne.Window) fyne.CanvasObject {
 }
 
 // 側邊欄
-func buildLeftCanvas(setContent func(v index.ViewInfo), loadPrevious bool) fyne.CanvasObject {
+func buildLeftCanvas(myWindow fyne.Window, setContent func(v index.ViewInfo), loadPrevious bool) fyne.CanvasObject {
 	a := fyne.CurrentApp()
 	//
 	tree := &widget.Tree{
@@ -77,8 +81,14 @@ func buildLeftCanvas(setContent func(v index.ViewInfo), loadPrevious bool) fyne.
 	}
 
 	//
+	logout_btn := widget.NewButton("Logout", func() {
+		myApp := fyne.CurrentApp()
+		myApp.Preferences().SetBool("remember_me", false)
+		myWindow.Close()
+	})
 	info_text := fmt.Sprintf("%v - %v", a.Preferences().String("version"), a.Preferences().String("buildDate"))
-	info := container.NewHBox(
+	info := container.NewVBox(
+		container.NewHBox(logout_btn),
 		widget.NewLabel(info_text),
 	)
 

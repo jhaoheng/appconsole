@@ -22,6 +22,7 @@ var numOfPage = 50
 
 //
 var myTable *widget.Table
+var count binding.String
 
 //
 func get_user_list() {
@@ -57,7 +58,8 @@ func setTop() fyne.CanvasObject {
 	space.StrokeWidth = 5
 
 	// count
-	count := widget.NewLabel(fmt.Sprintf("all count : %v", len(UserTabledatas)))
+	count = binding.NewString()
+	count.Set(fmt.Sprintf("all count : %v", len(UserTabledatas)))
 
 	//
 	top := container.NewVBox(
@@ -65,7 +67,7 @@ func setTop() fyne.CanvasObject {
 			space,
 			setDelBtn(),
 			layout.NewSpacer(),
-			count,
+			widget.NewLabelWithData(count),
 		),
 		space,
 		widget.NewSeparator(), // 分隔的線段
@@ -95,6 +97,7 @@ func setDelBtn() *widget.Button {
 		}
 		get_user_list()
 		myTable.Refresh()
+		count.Set(fmt.Sprintf("all count : %v", len(UserTabledatas)))
 		selected_delete_items = []DelItem{}
 	})
 	return delButton

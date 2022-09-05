@@ -53,7 +53,7 @@ var (
 		"list_user": {
 			Title: "User List",
 			Intro: "",
-			View:  nil,
+			View:  viewcontent.UserListScreen,
 		},
 		"log": {
 			Title: "Log",

@@ -16,78 +16,60 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-var UserTabledatas []binding.Struct
-var page = 0
-var numOfPage = 50
+var userList *UserList
 
-//
-var myTable *widget.Table
-var count binding.String
-
-//
-func get_user_list() {
-	UserTabledatas = []binding.Struct{}
-	mydata := module.NewUser().List(numOfPage, page)
-	for i := range mydata {
-		UserTabledatas = append(UserTabledatas, binding.BindStruct(&mydata[i]))
-	}
-}
-
-//
-func UserListScreen(_ fyne.Window) fyne.CanvasObject {
-	//
-	get_user_list()
+func UserListScreen(win fyne.Window) fyne.CanvasObject {
+	NewUserList(50, 0, win).RefreshTableDatas().SetTopView().SetTableView()
 	//
 	c := container.NewAdaptiveGrid(
 		1,
 		container.NewBorder(
-			setTop(),
-			nil,
-			nil,
-			nil,
-			setTable(),
+			userList.TopView, nil, nil, nil,
+			userList.MyTableView,
 		),
 	)
-	myTable.Refresh()
 	return c
 }
 
-func setTop() fyne.CanvasObject {
-	// 可以透過 canvas 來製造畫面的 padding
-	space := canvas.NewLine(color.Transparent)
-	space.StrokeWidth = 5
-
-	// count
-	count = binding.NewString()
-	count.Set(fmt.Sprintf("all count : %v", len(UserTabledatas)))
-
+// -
+type UserList struct {
+	Window fyne.Window
 	//
-	top := container.NewVBox(
-		container.NewHBox(
-			space,
-			setDelBtn(),
-			layout.NewSpacer(),
-			widget.NewLabelWithData(count),
-		),
-		space,
-		widget.NewSeparator(), // 分隔的線段
-		space,
-	)
-	return top
+	Page           int
+	NumOfPage      int
+	AllItemCount   binding.String
+	UserDatas      []module.User
+	UserTabledatas []binding.Struct
+	//
+	TopView     fyne.CanvasObject
+	MyTableView *widget.Table
+	//
+	MyTableDelItems []MyTableDelItem
 }
 
 // data_id
-type DelItem struct {
+type MyTableDelItem struct {
 	CellID   widget.TableCellID
 	DataID   int
 	Checkbox *widget.Check
 }
 
-var selected_delete_items []DelItem
+func NewUserList(numOfPage, page int, win fyne.Window) *UserList {
+	userList = &UserList{
+		Window:    win,
+		Page:      page,
+		NumOfPage: numOfPage,
+	}
+	return userList
+}
 
-func setDelBtn() *widget.Button {
+func (ul *UserList) SetTopView() *UserList {
+	// 可以透過 canvas 來製造畫面的 padding
+	space := canvas.NewLine(color.Transparent)
+	space.StrokeWidth = 5
+	//
 	delButton := widget.NewButton("delete", func() {
-		for _, item := range selected_delete_items {
+		for _, item := range ul.MyTableDelItems {
 			if err := module.NewUser().Del(item.DataID); err != nil {
 				logrus.Error(err)
 			} else {
@@ -95,60 +77,96 @@ func setDelBtn() *widget.Button {
 				item.Checkbox.Refresh()
 			}
 		}
-		get_user_list()
-		myTable.Refresh()
-		count.Set(fmt.Sprintf("all count : %v", len(UserTabledatas)))
-		selected_delete_items = []DelItem{}
+		userList.RefreshTableDatas()
+		ul.MyTableDelItems = []MyTableDelItem{}
 	})
-	return delButton
-}
 
-//
-func setTable() fyne.CanvasObject {
-	myTable = widget.NewTable(
-		tableSize,
-		tableCreateCell,
-		tableUpdateCell,
+	//
+	ul.TopView = container.NewVBox(
+		container.NewHBox(
+			space,
+			delButton,
+			layout.NewSpacer(),
+			widget.NewLabelWithData(ul.AllItemCount),
+		),
+		space,
+		widget.NewSeparator(), // 分隔的線段
+		space,
 	)
-	myTable.SetColumnWidth(0, 34)  //
-	myTable.SetColumnWidth(1, 34)  //
-	myTable.SetColumnWidth(2, 34)  //
-	myTable.SetColumnWidth(3, 320) //
-	myTable.SetColumnWidth(4, 100) //
-	myTable.SetColumnWidth(5, 100) //
-	myTable.SetColumnWidth(6, 100) //
-	return myTable
+	return ul
+}
+
+func (ul *UserList) SetTableView() *UserList {
+	ul.MyTableView = widget.NewTable(
+		ul.tableSize,
+		ul.tableCreateCell,
+		ul.tableUpdateCell,
+	)
+	ul.MyTableView.SetColumnWidth(0, 34)  //
+	ul.MyTableView.SetColumnWidth(1, 34)  //
+	ul.MyTableView.SetColumnWidth(2, 320) //
+	ul.MyTableView.SetColumnWidth(3, 100) //
+	ul.MyTableView.SetColumnWidth(4, 110) //
+	ul.MyTableView.SetColumnWidth(5, 80)  //
+	ul.MyTableView.SetColumnWidth(6, 60)  //
+	return ul
+}
+
+func (ul *UserList) RefreshTableDatas() *UserList {
+	//
+	ul.UserTabledatas = []binding.Struct{}
+	ul.UserDatas = module.NewUser().List(ul.NumOfPage, ul.Page)
+	for index := range ul.UserDatas {
+		ul.UserTabledatas = append(ul.UserTabledatas, binding.BindStruct(&ul.UserDatas[index]))
+	}
+
+	//
+	if ul.AllItemCount == nil {
+		ul.AllItemCount = binding.NewString()
+	}
+	ul.AllItemCount.Set(fmt.Sprintf("all count : %v", len(ul.UserTabledatas)))
+
+	//
+	if userList.MyTableView != nil {
+		userList.MyTableView.Refresh()
+	}
+	return ul
+}
+
+/******************
+****** Table ******
+*******************/
+
+/**/
+func (ul *UserList) tableSize() (rows int, columns int) {
+	return len(userList.UserTabledatas), 7
 }
 
 /**/
-func tableSize() (rows int, columns int) {
-	return len(UserTabledatas), 7
-}
-
-/**/
-func tableCreateCell() fyne.CanvasObject {
+func (ul *UserList) tableCreateCell() fyne.CanvasObject {
 	c := container.NewMax(
 		widget.NewCheck("", func(ok bool) {}),
 		widget.NewLabel(""),
-		container.NewMax(canvas.NewImageFromFile("./resources/img/default_user.jpg")),
+		container.NewCenter(widget.NewButton("edit", func() {})),
 	)
 	return c
 }
 
 /**/
-func tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObject) {
+func (ul *UserList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObject) {
 	checkbox := cell.(*fyne.Container).Objects[0].(*widget.Check)
 	label := cell.(*fyne.Container).Objects[1].(*widget.Label)
-	img_container := cell.(*fyne.Container).Objects[2].(*fyne.Container)
+	edit_btn := cell.(*fyne.Container).Objects[2].(*fyne.Container).Objects[0].(*widget.Button)
 
+	//
 	checkbox.Hide()
 	label.Hide()
-	img_container.Hide()
+	edit_btn.Hide()
 	//
 	if id.Col == 0 {
 		checkbox.Show()
-	} else if id.Col == 2 {
-		img_container.Show()
+	} else if id.Col == 6 {
+		edit_btn.Show()
 	} else {
 		label.Show()
 	}
@@ -157,48 +175,48 @@ func tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObject) {
 	switch id.Col {
 	case 0:
 		checkbox.OnChanged = func(ok bool) {
-			data_id := tableCellGetValue(id.Row, "ID").(int)
+			data_id := ul.tableCellGetValue(id.Row, "ID").(int)
 			if ok {
-				selected_delete_items = append(selected_delete_items, DelItem{
+				userList.MyTableDelItems = append(userList.MyTableDelItems, MyTableDelItem{
 					DataID:   data_id,
 					Checkbox: checkbox,
 					CellID:   id,
 				})
-				sort.Slice(selected_delete_items, func(i int, j int) bool { return i < j })
+				sort.Slice(userList.MyTableDelItems, func(i int, j int) bool { return i < j })
 			} else {
-				for index, val := range selected_delete_items {
+				for index, val := range userList.MyTableDelItems {
 					if val.DataID == data_id {
-						selected_delete_items = append(selected_delete_items[:index], selected_delete_items[index+1:]...)
+						userList.MyTableDelItems = append(userList.MyTableDelItems[:index], userList.MyTableDelItems[index+1:]...)
 					}
 				}
 			}
 		}
 	case 1:
-		label.SetText(fmt.Sprintf("%d", tableCellGetValue(id.Row, "ID").(int)))
+		label.SetText(fmt.Sprintf("%d", ul.tableCellGetValue(id.Row, "ID").(int)))
 	case 2:
-		resource := tableCellGetValue(id.Row, "Picture").([]byte)
-		if resource != nil {
-			img_container.Objects[0] = canvas.NewImageFromResource(fyne.NewStaticResource("img", resource))
-			// resource := tableCellGetValue(id.Row, "PictureFilePath").(string)
-			// img_container.Objects[0] = canvas.NewImageFromFile(resource)
-			img_container.Refresh()
-		}
+		label.SetText(ul.tableCellGetValue(id.Row, "MemberID").(string))
 	case 3:
-		label.SetText(tableCellGetValue(id.Row, "MemberID").(string))
+		label.SetText(ul.tableCellGetValue(id.Row, "Name").(string))
 	case 4:
-		label.SetText(tableCellGetValue(id.Row, "Name").(string))
+		label.SetText(ul.tableCellGetValue(id.Row, "Phone").(string))
 	case 5:
-		label.SetText(tableCellGetValue(id.Row, "Phone").(string))
+		label.SetText(ul.tableCellGetValue(id.Row, "Gender").(string))
 	case 6:
-		label.SetText(tableCellGetValue(id.Row, "Gender").(string))
+		edit_btn.OnTapped = func() {
+			userEdit := NewUserEdit(ul.Window, ul.UserDatas[id.Row], func(edited module.User) {
+				// fmt.Printf("%+v\n", edited)
+				ul.UserDatas[id.Row] = edited
+				ul.RefreshTableDatas()
+			})
+			userEdit.ShowModalScreen()
+		}
 	default:
-		label.SetText("unknow")
+		label.SetText("undefined cell")
 	}
 }
 
-//
-func tableCellGetValue(index int, key string) interface{} {
-	val, err := UserTabledatas[index].GetValue(key)
+func (ul *UserList) tableCellGetValue(index int, key string) interface{} {
+	val, err := userList.UserTabledatas[index].GetValue(key)
 	if err != nil {
 		logrus.Error(err)
 		return nil

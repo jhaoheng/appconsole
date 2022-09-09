@@ -21,13 +21,11 @@ func NewUser() IUser {
 	return &User{}
 }
 
-//
 func (u *User) Create(newuser *User) bool {
 	FakeDataUsers = append(FakeDataUsers, *newuser)
 	return true
 }
 
-//
 func (u *User) GetByID(id int) User {
 	output := User{}
 	for _, fakeuser := range FakeDataUsers {
@@ -39,12 +37,10 @@ func (u *User) GetByID(id int) User {
 	return output
 }
 
-//
 func (u *User) List(num int, page int) []User {
 	return FakeDataUsers
 }
 
-//
 func (u *User) Del(id int) error {
 	NewFakeDataUsers := []User{}
 	for _, v := range FakeDataUsers {

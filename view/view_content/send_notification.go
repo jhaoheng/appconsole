@@ -6,15 +6,17 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func SendNotificationScreen(_ fyne.Window) fyne.CanvasObject {
+func SendNotificationScreen(_ fyne.Window) *fyne.Container {
 	return container.NewMax(
 		container.NewCenter(
-			widget.NewButton("send", sendNotification),
+			widget.NewButton("send", func() {
+				SendNotification("title", "content")
+			}),
 		),
 	)
 }
 
-func sendNotification() {
+func SendNotification(title, content string) {
 	myApp := fyne.CurrentApp()
-	myApp.SendNotification(fyne.NewNotification("title", "content"))
+	myApp.SendNotification(fyne.NewNotification(title, content))
 }

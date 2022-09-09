@@ -20,7 +20,7 @@ import (
 
 var userList *UserList
 
-func UserListScreen(win fyne.Window) fyne.CanvasObject {
+func UserListScreen(win fyne.Window) *fyne.Container {
 	NewUserList(50, 0, win).RefreshTableDatas().SetTopView().SetTableView()
 	//
 	c := container.NewAdaptiveGrid(
@@ -46,11 +46,10 @@ type UserList struct {
 	TopView     fyne.CanvasObject
 	MyTableView *widget.Table
 	//
-	MyTableDelItems []MyTableDelItem
+	MyTableDelItems []UserTableDelItem
 }
 
-// data_id
-type MyTableDelItem struct {
+type UserTableDelItem struct {
 	CellID   widget.TableCellID
 	DataID   int
 	Checkbox *widget.Check
@@ -80,7 +79,7 @@ func (ul *UserList) SetTopView() *UserList {
 			}
 		}
 		userList.RefreshTableDatas()
-		ul.MyTableDelItems = []MyTableDelItem{}
+		ul.MyTableDelItems = []UserTableDelItem{}
 	})
 
 	//
@@ -193,7 +192,7 @@ func (ul *UserList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObjec
 		checkbox.OnChanged = func(ok bool) {
 			data_id := ul.tableCellGetValue(id.Row, "ID").(int)
 			if ok {
-				userList.MyTableDelItems = append(userList.MyTableDelItems, MyTableDelItem{
+				userList.MyTableDelItems = append(userList.MyTableDelItems, UserTableDelItem{
 					DataID:   data_id,
 					Checkbox: checkbox,
 					CellID:   id,

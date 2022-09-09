@@ -9,7 +9,7 @@ import (
 type ViewInfo struct {
 	Title string
 	Intro string
-	View  func(w fyne.Window) fyne.CanvasObject
+	View  func(w fyne.Window) *fyne.Container
 }
 
 var (
@@ -28,30 +28,10 @@ var (
 		"device": {
 			Title: "Device",
 			Intro: "",
-			View:  nil,
-		},
-		"add_device": {
-			Title: "Add New Device",
-			Intro: "",
-			View:  nil,
-		},
-		"list_device": {
-			Title: "Device List",
-			Intro: "",
-			View:  nil,
+			View:  viewcontent.DeviceListScreen,
 		},
 		"user": {
 			Title: "User",
-			Intro: "",
-			View:  nil,
-		},
-		"add_user": {
-			Title: "Add New User",
-			Intro: "",
-			View:  nil,
-		},
-		"list_user": {
-			Title: "User List",
 			Intro: "",
 			View:  viewcontent.UserListScreen,
 		},
@@ -80,8 +60,6 @@ var (
 	// ViewIndex  defines how our view should be laid out in the index tree
 	ViewIndex = map[string][]string{
 		"":         {"welcome", "send_notification", "device", "user", "log", "advanced"},
-		"device":   {"add_device", "list_device"},
-		"user":     {"add_user", "list_user"},
 		"log":      {"member_log", "admin_log"},
 		"advanced": {},
 	}

@@ -6,6 +6,7 @@ import (
 	"image/color"
 	"sort"
 
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 
 	"fyne.io/fyne/v2"
@@ -13,6 +14,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -82,12 +84,26 @@ func (ul *UserList) SetTopView() *UserList {
 	})
 
 	//
+	addButton := widget.NewButton("", func() {
+		userEdit := NewUserEdit(ul.Window, module.User{
+			MemberID: uuid.New().String(),
+		}, func(new_user module.User) {
+			new_user.ID = module.NewUser().Count() + 1
+			module.NewUser().Create(&new_user)
+			ul.RefreshTableDatas()
+		})
+		userEdit.ShowModalScreen()
+	})
+	addButton.SetIcon(theme.ContentAddIcon())
+
+	//
 	ul.TopView = container.NewVBox(
 		container.NewHBox(
 			space,
 			delButton,
 			layout.NewSpacer(),
 			widget.NewLabelWithData(ul.AllItemCount),
+			addButton,
 		),
 		space,
 		widget.NewSeparator(), // 分隔的線段
@@ -203,9 +219,8 @@ func (ul *UserList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObjec
 		label.SetText(ul.tableCellGetValue(id.Row, "Gender").(string))
 	case 6:
 		edit_btn.OnTapped = func() {
-			userEdit := NewUserEdit(ul.Window, ul.UserDatas[id.Row], func(edited module.User) {
-				// fmt.Printf("%+v\n", edited)
-				ul.UserDatas[id.Row] = edited
+			userEdit := NewUserEdit(ul.Window, ul.UserDatas[id.Row], func(edited_user module.User) {
+				ul.UserDatas[id.Row] = edited_user
 				ul.RefreshTableDatas()
 			})
 			userEdit.ShowModalScreen()

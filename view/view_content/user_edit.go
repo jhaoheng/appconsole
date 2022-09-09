@@ -24,7 +24,6 @@ type UserEdit struct {
 	//
 	UserBinding  binding.Struct
 	ImageBinding binding.Bytes
-	UserImg      *canvas.Image
 	//
 	TopView     fyne.CanvasObject
 	ContentView fyne.CanvasObject
@@ -82,14 +81,14 @@ func (ue *UserEdit) SetTop() fyne.CanvasObject {
 	if err != nil {
 		panic(err)
 	}
-	ue.UserImg = canvas.NewImageFromResource(fyne.NewStaticResource("", img))
-	ue.UserImg.SetMinSize(fyne.NewSize(300, 300))
-	ue.UserImg.Resize(fyne.NewSize(300, 300))
+	imgCanvas := canvas.NewImageFromResource(fyne.NewStaticResource("", img))
+	imgCanvas.SetMinSize(fyne.NewSize(300, 300))
+	imgCanvas.Resize(fyne.NewSize(300, 300))
 
 	//
 	imageContainer := container.NewHBox(
 		layout.NewSpacer(),
-		container.NewMax(ue.UserImg),
+		container.NewMax(imgCanvas),
 		layout.NewSpacer(),
 	)
 

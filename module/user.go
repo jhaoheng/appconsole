@@ -5,6 +5,7 @@ type IUser interface {
 	GetByID(id int) User
 	List(num int, page int) []User
 	Del(id int) error
+	Count() int
 }
 
 type User struct {
@@ -50,4 +51,8 @@ func (u *User) Del(id int) error {
 	}
 	FakeDataUsers = NewFakeDataUsers
 	return nil
+}
+
+func (u *User) Count() int {
+	return len(FakeDataUsers)
 }

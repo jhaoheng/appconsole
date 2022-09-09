@@ -21,34 +21,32 @@ import (
 
 var deviceList *DeviceList
 
-func DeviceListScreen(win fyne.Window) *fyne.Container {
+func DeviceListView(win fyne.Window) *fyne.Container {
 	deviceList = NewDeviceList(win, 50, 0).RefreshTableDatas()
-	deviceList.DeviceListScreen = container.NewAdaptiveGrid(
+	deviceList.DeviceListView = container.NewAdaptiveGrid(
 		1,
 		container.NewBorder(
 			deviceList.SetTopView(), nil, nil, nil,
 			deviceList.SetTableView(),
 		),
 	)
-	deviceList.MyTableViewContainer = deviceList.DeviceListScreen.Objects[0].(*fyne.Container).Objects[0].(*fyne.Container)
+	deviceList.MyTableViewContainer = deviceList.DeviceListView.Objects[0].(*fyne.Container).Objects[0].(*fyne.Container)
 	// deviceList.MyTableViewContainer.Hide()
-	deviceList.TopViewContainer = deviceList.DeviceListScreen.Objects[0].(*fyne.Container).Objects[1].(*fyne.Container)
+	deviceList.TopViewContainer = deviceList.DeviceListView.Objects[0].(*fyne.Container).Objects[1].(*fyne.Container)
 	// deviceList.TopViewContainer.Hide()
 	deviceList.MyTableView = deviceList.MyTableViewContainer.Objects[0].(*widget.Table)
 	deviceList.NodataMaskContainer = deviceList.MyTableViewContainer.Objects[1].(*fyne.Container)
 	// deviceList.NodataMaskContainer.Hide()
 
-	if len(deviceList.Datas) != 0 {
-		deviceList.NodataMaskContainer.Hide()
-	}
+	//
 	deviceList.RefreshTableDatas()
 
-	return deviceList.DeviceListScreen
+	return deviceList.DeviceListView
 }
 
 type DeviceList struct {
-	Window           fyne.Window
-	DeviceListScreen *fyne.Container
+	Window         fyne.Window
+	DeviceListView *fyne.Container
 	//
 	Page         int
 	NumOfPage    int
@@ -58,11 +56,10 @@ type DeviceList struct {
 	//
 	TopViewContainer     *fyne.Container
 	MyTableViewContainer *fyne.Container
+	NodataMaskContainer  *fyne.Container
 	MyTableView          *widget.Table
 	//
 	MyTableDelItems []DeviceTableDelItem
-	//
-	NodataMaskContainer *fyne.Container
 }
 
 type DeviceTableDelItem struct {
@@ -148,7 +145,7 @@ func (dl *DeviceList) SetTableView() *fyne.Container {
 	//
 	myTableView := container.NewMax(
 		table,
-		NodataMaskScreen(),
+		NodataMaskView(),
 	)
 
 	return myTableView

@@ -1,4 +1,4 @@
-package view
+package view_content
 
 import (
 	"image/color"
@@ -14,7 +14,7 @@ import (
 /*
 - 當需要時, 將 loading 加入到內容最上層
 */
-func LoadingScreen(size fyne.Size) *fyne.Container {
+func LoadingView(size fyne.Size) *fyne.Container {
 	gif, err := extwidget.NewAnimatedGif(storage.NewFileURI("../resources/gif/loading.gif"))
 	if err != nil {
 		panic(err)

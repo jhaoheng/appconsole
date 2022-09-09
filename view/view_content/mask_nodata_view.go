@@ -10,7 +10,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func NodataMaskScreen() *fyne.Container {
+func NodataMaskView() *fyne.Container {
 	background := canvas.NewRasterWithPixels(func(x int, y int, w int, h int) color.Color {
 		return theme.BackgroundColor()
 	})

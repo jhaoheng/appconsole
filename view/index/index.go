@@ -18,22 +18,17 @@ var (
 		"welcome": {
 			Title: "Welcome",
 			Intro: "",
-			View:  viewcontent.WelcomeScreen,
-		},
-		"send_notification": {
-			Title: "Send Notification",
-			Intro: "Press btn to see the action.",
-			View:  viewcontent.SendNotificationScreen,
+			View:  viewcontent.WelcomeView,
 		},
 		"device": {
 			Title: "Device",
 			Intro: "",
-			View:  viewcontent.DeviceListScreen,
+			View:  viewcontent.DeviceListView,
 		},
 		"user": {
 			Title: "User",
 			Intro: "",
-			View:  viewcontent.UserListScreen,
+			View:  viewcontent.UserListView,
 		},
 		"log": {
 			Title: "Log",
@@ -59,7 +54,7 @@ var (
 
 	// ViewIndex  defines how our view should be laid out in the index tree
 	ViewIndex = map[string][]string{
-		"":         {"welcome", "send_notification", "device", "user", "log", "advanced"},
+		"":         {"welcome", "device", "user", "log", "advanced"},
 		"log":      {"member_log", "admin_log"},
 		"advanced": {},
 	}

@@ -18,9 +18,9 @@ import (
 var userEdit *UserEdit
 
 type UserEdit struct {
-	Window              fyne.Window
-	UserEditScreen      *fyne.Container
-	UserEditScreenModal *widget.PopUp
+	Window            fyne.Window
+	UserEditView      *fyne.Container
+	UserEditViewModal *widget.PopUp
 	//
 	UserBinding  binding.Struct
 	ImageBinding binding.Bytes
@@ -42,27 +42,27 @@ func NewUserEdit(window fyne.Window, user module.User, edited_callback func(edit
 	img.Set(user.Picture)
 	userEdit.ImageBinding = img
 	//
-	userEdit.UserEditScreen = container.NewAdaptiveGrid(
+	userEdit.UserEditView = container.NewAdaptiveGrid(
 		1,
 		container.NewBorder(
 			userEdit.SetTop(), nil, nil, nil,
 			userEdit.SetContent(),
 		),
 	)
-	userEdit.UserEditScreenModal = widget.NewModalPopUp(userEdit.UserEditScreen, window.Canvas())
+	userEdit.UserEditViewModal = widget.NewModalPopUp(userEdit.UserEditView, window.Canvas())
 	return userEdit
 }
 
 func (ue *UserEdit) GetView() fyne.CanvasObject {
-	return ue.UserEditScreen
+	return ue.UserEditView
 }
 
-func (ue *UserEdit) ShowModalScreen() {
-	ue.UserEditScreenModal.Show()
+func (ue *UserEdit) ShowModalView() {
+	ue.UserEditViewModal.Show()
 }
 
-func (ue *UserEdit) HideModalScreen() {
-	ue.UserEditScreenModal.Hide()
+func (ue *UserEdit) HideModalView() {
+	ue.UserEditViewModal.Hide()
 }
 
 func (ue *UserEdit) GetUserData(key string) (value interface{}) {
@@ -141,10 +141,10 @@ func (ue *UserEdit) SetContent() fyne.CanvasObject {
 				}(),
 			}
 			ue.edited_callback(*user)
-			userEdit.HideModalScreen()
+			userEdit.HideModalView()
 		},
 		OnCancel: func() {
-			userEdit.HideModalScreen()
+			userEdit.HideModalView()
 		},
 	}
 	// we can also append items
@@ -192,6 +192,6 @@ func (ue *UserEdit) showImage(f fyne.URIReadCloser) {
 	//
 	ue.ImageBinding.Set(data)
 	//
-	imgContainer := ue.UserEditScreen.Objects[0].(*fyne.Container).Objects[1].(*fyne.Container).Objects[0].(*fyne.Container).Objects[1].(*fyne.Container)
+	imgContainer := ue.UserEditView.Objects[0].(*fyne.Container).Objects[1].(*fyne.Container).Objects[0].(*fyne.Container).Objects[1].(*fyne.Container)
 	imgContainer.Add(canvas.NewImageFromResource(fyne.NewStaticResource("", data)))
 }

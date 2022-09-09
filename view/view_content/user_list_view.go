@@ -20,31 +20,44 @@ import (
 
 var userList *UserList
 
-func UserListScreen(win fyne.Window) *fyne.Container {
-	NewUserList(50, 0, win).RefreshTableDatas().SetTopView().SetTableView()
-	//
-	c := container.NewAdaptiveGrid(
+func UserListView(win fyne.Window) *fyne.Container {
+	userList = NewUserList(win, 50, 0).RefreshTableDatas()
+	userList.View = container.NewAdaptiveGrid(
 		1,
 		container.NewBorder(
-			userList.TopView, nil, nil, nil,
-			userList.MyTableView,
+			userList.SetTopView(), nil, nil, nil,
+			userList.SetTableView(),
 		),
 	)
-	return c
+
+	//
+	userList.MyTableViewContainer = userList.View.Objects[0].(*fyne.Container).Objects[0].(*fyne.Container)
+	// userList.MyTableViewContainer.Hide()
+	userList.TopViewContainer = userList.View.Objects[0].(*fyne.Container).Objects[1].(*fyne.Container)
+	// userList.TopViewContainer.Hide()
+	userList.MyTableView = userList.MyTableViewContainer.Objects[0].(*widget.Table)
+	userList.NodataMaskContainer = userList.MyTableViewContainer.Objects[1].(*fyne.Container)
+
+	//
+	userList.RefreshTableDatas()
+	return userList.View
 }
 
 // -
 type UserList struct {
 	Window fyne.Window
+	View   *fyne.Container
 	//
-	Page           int
-	NumOfPage      int
-	AllItemCount   binding.String
-	UserDatas      []module.User
-	UserTabledatas []binding.Struct
+	Page         int
+	NumOfPage    int
+	AllItemCount binding.String
+	Datas        []module.User
+	Tabledatas   []binding.Struct
 	//
-	TopView     fyne.CanvasObject
-	MyTableView *widget.Table
+	TopViewContainer     *fyne.Container
+	MyTableViewContainer *fyne.Container
+	NodataMaskContainer  *fyne.Container
+	MyTableView          *widget.Table
 	//
 	MyTableDelItems []UserTableDelItem
 }
@@ -55,7 +68,7 @@ type UserTableDelItem struct {
 	Checkbox *widget.Check
 }
 
-func NewUserList(numOfPage, page int, win fyne.Window) *UserList {
+func NewUserList(win fyne.Window, numOfPage, page int) *UserList {
 	userList = &UserList{
 		Window:    win,
 		Page:      page,
@@ -64,7 +77,7 @@ func NewUserList(numOfPage, page int, win fyne.Window) *UserList {
 	return userList
 }
 
-func (ul *UserList) SetTopView() *UserList {
+func (ul *UserList) SetTopView() *fyne.Container {
 	// 可以透過 canvas 來製造畫面的 padding
 	space := canvas.NewLine(color.Transparent)
 	space.StrokeWidth = 5
@@ -91,12 +104,13 @@ func (ul *UserList) SetTopView() *UserList {
 			module.NewUser().Create(&new_user)
 			ul.RefreshTableDatas()
 		})
-		userEdit.ShowModalScreen()
+		userEdit.ShowModalView()
+		SendNotification("Add User", "Success!!")
 	})
 	addButton.SetIcon(theme.ContentAddIcon())
 
 	//
-	ul.TopView = container.NewVBox(
+	topView := container.NewVBox(
 		container.NewHBox(
 			space,
 			delButton,
@@ -108,38 +122,51 @@ func (ul *UserList) SetTopView() *UserList {
 		widget.NewSeparator(), // 分隔的線段
 		space,
 	)
-	return ul
+	return topView
 }
 
-func (ul *UserList) SetTableView() *UserList {
-	ul.MyTableView = widget.NewTable(
+func (ul *UserList) SetTableView() *fyne.Container {
+	table := widget.NewTable(
 		ul.tableSize,
 		ul.tableCreateCell,
 		ul.tableUpdateCell,
 	)
-	ul.MyTableView.SetColumnWidth(0, 34)  //
-	ul.MyTableView.SetColumnWidth(1, 34)  //
-	ul.MyTableView.SetColumnWidth(2, 320) //
-	ul.MyTableView.SetColumnWidth(3, 100) //
-	ul.MyTableView.SetColumnWidth(4, 110) //
-	ul.MyTableView.SetColumnWidth(5, 80)  //
-	ul.MyTableView.SetColumnWidth(6, 60)  //
-	return ul
+	table.SetColumnWidth(0, 34)  //
+	table.SetColumnWidth(1, 34)  //
+	table.SetColumnWidth(2, 320) //
+	table.SetColumnWidth(3, 100) //
+	table.SetColumnWidth(4, 110) //
+	table.SetColumnWidth(5, 80)  //
+	table.SetColumnWidth(6, 60)  //
+	//
+	myTableView := container.NewMax(
+		table,
+		NodataMaskView(),
+	)
+	return myTableView
 }
 
 func (ul *UserList) RefreshTableDatas() *UserList {
 	//
-	ul.UserTabledatas = []binding.Struct{}
-	ul.UserDatas = module.NewUser().List(ul.NumOfPage, ul.Page)
-	for index := range ul.UserDatas {
-		ul.UserTabledatas = append(ul.UserTabledatas, binding.BindStruct(&ul.UserDatas[index]))
+	ul.Tabledatas = []binding.Struct{}
+	ul.Datas = module.NewUser().List(ul.NumOfPage, ul.Page)
+	for index := range ul.Datas {
+		ul.Tabledatas = append(ul.Tabledatas, binding.BindStruct(&ul.Datas[index]))
 	}
 
 	//
 	if ul.AllItemCount == nil {
 		ul.AllItemCount = binding.NewString()
 	}
-	ul.AllItemCount.Set(fmt.Sprintf("all count : %v", len(ul.UserTabledatas)))
+	ul.AllItemCount.Set(fmt.Sprintf("all count : %v", len(ul.Tabledatas)))
+
+	if userList.NodataMaskContainer != nil {
+		if len(userList.Datas) == 0 {
+			userList.NodataMaskContainer.Show()
+		} else {
+			userList.NodataMaskContainer.Hide()
+		}
+	}
 
 	//
 	if userList.MyTableView != nil {
@@ -154,7 +181,7 @@ func (ul *UserList) RefreshTableDatas() *UserList {
 
 /**/
 func (ul *UserList) tableSize() (rows int, columns int) {
-	return len(userList.UserTabledatas), 7
+	return len(userList.Tabledatas), 7
 }
 
 /**/
@@ -218,11 +245,11 @@ func (ul *UserList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObjec
 		label.SetText(ul.tableCellGetValue(id.Row, "Gender").(string))
 	case 6:
 		edit_btn.OnTapped = func() {
-			userEdit := NewUserEdit(ul.Window, ul.UserDatas[id.Row], func(edited_user module.User) {
-				ul.UserDatas[id.Row] = edited_user
+			userEdit := NewUserEdit(ul.Window, ul.Datas[id.Row], func(edited_user module.User) {
+				ul.Datas[id.Row] = edited_user
 				ul.RefreshTableDatas()
 			})
-			userEdit.ShowModalScreen()
+			userEdit.ShowModalView()
 		}
 	default:
 		label.SetText("undefined cell")
@@ -230,7 +257,7 @@ func (ul *UserList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObjec
 }
 
 func (ul *UserList) tableCellGetValue(index int, key string) interface{} {
-	val, err := userList.UserTabledatas[index].GetValue(key)
+	val, err := userList.Tabledatas[index].GetValue(key)
 	if err != nil {
 		logrus.Error(err)
 		return nil

@@ -25,7 +25,7 @@ func UserListView(win fyne.Window) *fyne.Container {
 	userList.View = container.NewAdaptiveGrid(
 		1,
 		container.NewBorder(
-			userList.SetTopView(), nil, nil, nil,
+			userList.SetTopView(), userList.SetAddButton(), nil, nil,
 			userList.SetTableView(),
 		),
 	)
@@ -96,27 +96,12 @@ func (ul *UserList) SetTopView() *fyne.Container {
 	})
 
 	//
-	addButton := widget.NewButton("", func() {
-		userEdit := NewUserEdit(ul.Window, module.User{
-			MemberID: uuid.New().String(),
-		}, func(new_user module.User) {
-			new_user.ID = module.NewUser().Count() + 1
-			module.NewUser().Create(&new_user)
-			ul.RefreshTableDatas()
-		})
-		userEdit.ShowModalView()
-		SendNotification("Add User", "Success!!")
-	})
-	addButton.SetIcon(theme.ContentAddIcon())
-
-	//
 	topView := container.NewVBox(
 		container.NewHBox(
 			space,
 			delButton,
 			layout.NewSpacer(),
 			widget.NewLabelWithData(ul.AllItemCount),
-			addButton,
 		),
 		space,
 		widget.NewSeparator(), // 分隔的線段
@@ -173,6 +158,22 @@ func (ul *UserList) RefreshTableDatas() *UserList {
 		userList.MyTableView.Refresh()
 	}
 	return ul
+}
+
+func (ul *UserList) SetAddButton() *fyne.Container {
+	addButton := widget.NewButton("", func() {
+		userEdit := NewUserEdit(ul.Window, module.User{
+			MemberID: uuid.New().String(),
+		}, func(new_user module.User) {
+			new_user.ID = module.NewUser().Count() + 1
+			module.NewUser().Create(&new_user)
+			ul.RefreshTableDatas()
+			SendNotification("Add User", "Success!!")
+		})
+		userEdit.ShowModalView()
+	})
+	addButton.SetIcon(theme.ContentAddIcon())
+	return container.NewMax(addButton)
 }
 
 /******************

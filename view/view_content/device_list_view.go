@@ -16,9 +16,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// 架構要重新設計
-// 要把 table 跟 top 等最後加入
-
 var deviceList *DeviceList
 
 func DeviceListView(win fyne.Window) *fyne.Container {
@@ -26,7 +23,7 @@ func DeviceListView(win fyne.Window) *fyne.Container {
 	deviceList.DeviceListView = container.NewAdaptiveGrid(
 		1,
 		container.NewBorder(
-			deviceList.SetTopView(), nil, nil, nil,
+			deviceList.SetTopView(), deviceList.SetAddButton(), nil, nil,
 			deviceList.SetTableView(),
 		),
 	)
@@ -96,28 +93,12 @@ func (dl *DeviceList) SetTopView() *fyne.Container {
 	})
 
 	//
-	addButton := widget.NewButton("", func() {
-		module.FakeDataDevices = append(module.FakeDataDevices, module.Device{
-			ID:           len(module.FakeDataDevices) + 1,
-			Name:         "device_01",
-			IP:           "192.168.0.1",
-			MacAddress:   "xx:xx:xx:xx:xx:xx",
-			DeviceSerial: "J91322386",
-			Status:       true,
-		})
-		dl.RefreshTableDatas()
-		SendNotification("Add New Device", "Success")
-	})
-	addButton.SetIcon(theme.ContentAddIcon())
-
-	//
 	topView := container.NewVBox(
 		container.NewHBox(
 			space,
 			delButton,
 			layout.NewSpacer(),
 			widget.NewLabelWithData(dl.AllItemCount),
-			addButton,
 		),
 		space,
 		widget.NewSeparator(), // 分隔的線段
@@ -178,6 +159,23 @@ func (dl *DeviceList) RefreshTableDatas() *DeviceList {
 		deviceList.MyTableView.Refresh()
 	}
 	return dl
+}
+
+func (dl *DeviceList) SetAddButton() *fyne.Container {
+	addButton := widget.NewButton("", func() {
+		module.FakeDataDevices = append(module.FakeDataDevices, module.Device{
+			ID:           len(module.FakeDataDevices) + 1,
+			Name:         "device_01",
+			IP:           "192.168.0.1",
+			MacAddress:   "xx:xx:xx:xx:xx:xx",
+			DeviceSerial: "J91322386",
+			Status:       true,
+		})
+		dl.RefreshTableDatas()
+		SendNotification("Add New Device", "Success")
+	})
+	addButton.SetIcon(theme.ContentAddIcon())
+	return container.NewMax(addButton)
 }
 
 /******************

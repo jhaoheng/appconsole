@@ -13,7 +13,6 @@ import (
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
-	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
@@ -97,11 +96,14 @@ func (ul *UserList) SetTopView() *fyne.Container {
 
 	//
 	topView := container.NewVBox(
-		container.NewHBox(
-			space,
+		container.NewBorder(
+			nil,
+			nil,
 			delButton,
-			layout.NewSpacer(),
 			widget.NewLabelWithData(ul.AllItemCount),
+			SetUserSearchView([]string{"name", "member_id"}, func(result []module.User) {
+				ul.RefreshTableDatas()
+			}),
 		),
 		space,
 		widget.NewSeparator(), // 分隔的線段

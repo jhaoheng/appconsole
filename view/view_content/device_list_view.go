@@ -78,6 +78,7 @@ func (dl *DeviceList) SetTopView() *fyne.Container {
 	// 可以透過 canvas 來製造畫面的 padding
 	space := canvas.NewLine(color.Transparent)
 	space.StrokeWidth = 5
+
 	//
 	delButton := widget.NewButton("delete", func() {
 		for _, item := range dl.MyTableDelItems {
@@ -204,6 +205,7 @@ func (dl *DeviceList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObj
 	//
 	checkbox.Hide()
 	label.Hide()
+
 	//
 	if id.Col == 0 {
 		checkbox.Show()
@@ -212,10 +214,11 @@ func (dl *DeviceList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObj
 	}
 
 	//
+	data_index := id.Row
 	switch id.Col {
 	case 0:
 		checkbox.OnChanged = func(ok bool) {
-			data_id := dl.tableCellGetValue(id.Row, "ID").(int)
+			data_id := dl.tableCellGetValue(data_index, "ID").(int)
 			if ok {
 				deviceList.MyTableDelItems = append(deviceList.MyTableDelItems, DeviceTableDelItem{
 					DataID:   data_id,
@@ -232,17 +235,17 @@ func (dl *DeviceList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObj
 			}
 		}
 	case 1:
-		label.SetText(fmt.Sprintf("%d", dl.tableCellGetValue(id.Row, "ID").(int)))
+		label.SetText(fmt.Sprintf("%d", dl.tableCellGetValue(data_index, "ID").(int)))
 	case 2:
-		label.SetText(dl.tableCellGetValue(id.Row, "Name").(string))
+		label.SetText(dl.tableCellGetValue(data_index, "Name").(string))
 	case 3:
-		label.SetText(dl.tableCellGetValue(id.Row, "IP").(string))
+		label.SetText(dl.tableCellGetValue(data_index, "IP").(string))
 	case 4:
-		label.SetText(dl.tableCellGetValue(id.Row, "MacAddress").(string))
+		label.SetText(dl.tableCellGetValue(data_index, "MacAddress").(string))
 	case 5:
-		label.SetText(dl.tableCellGetValue(id.Row, "DeviceSerial").(string))
+		label.SetText(dl.tableCellGetValue(data_index, "DeviceSerial").(string))
 	case 6:
-		label.SetText(fmt.Sprintf("%v", dl.tableCellGetValue(id.Row, "Status").(bool)))
+		label.SetText(fmt.Sprintf("%v", dl.tableCellGetValue(data_index, "Status").(bool)))
 	default:
 		label.SetText("undefined cell")
 	}
@@ -256,3 +259,40 @@ func (dl *DeviceList) tableCellGetValue(index int, key string) interface{} {
 	}
 	return val
 }
+
+// func (dl *DeviceList) tableSetHead(id widget.TableCellID, cell fyne.CanvasObject) {
+// 	if id.Row != 0 {
+// 		return
+// 	}
+
+// 	head_labels := []string{
+// 		"",
+// 		"ID",
+// 		"Name",
+// 		"IP",
+// 		"MacAddress",
+// 		"DeviceSerial",
+// 		"Status",
+// 	}
+
+// 	label := cell.(*fyne.Container).Objects[1].(*widget.Label)
+// 	label.Show()
+
+// 	switch id.Col {
+// 	case 0:
+// 		label.SetText(head_labels[id.Col])
+// 	case 1:
+// 		label.SetText(head_labels[id.Col])
+// 	case 2:
+// 		label.SetText(head_labels[id.Col])
+// 	case 3:
+// 		label.SetText(head_labels[id.Col])
+// 	case 4:
+// 		label.SetText(head_labels[id.Col])
+// 	case 5:
+// 		label.SetText(head_labels[id.Col])
+// 	case 6:
+// 		label.SetText(head_labels[id.Col])
+// 	default:
+// 	}
+// }

@@ -6,6 +6,8 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	xwidget "fyne.io/x/fyne/widget"
 	"github.com/sirupsen/logrus"
@@ -17,6 +19,13 @@ func SetUserSearchView(search_keys []string, callback func(search_result []modul
 
 	options := []string{} // 初始可選的範圍
 	entry := xwidget.NewCompletionEntry(options)
+	entry.ActionItem = func() fyne.CanvasObject {
+		btn := widget.NewButton("", func() {
+			dialog.NewInformation("INFORMATION", "this is message", fyne.CurrentApp().Driver().AllWindows()[0]).Show()
+		})
+		btn.SetIcon(theme.InfoIcon())
+		return btn
+	}()
 
 	// When the use typed text, complete the list.
 	entry.OnChanged = func(s string) {

@@ -10,7 +10,7 @@ import (
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
-	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"github.com/sirupsen/logrus"
@@ -95,17 +95,43 @@ func (dl *DeviceList) SetTopView() *fyne.Container {
 
 	//
 	topView := container.NewVBox(
-		container.NewHBox(
-			space,
+		container.NewBorder(
+			nil,
+			nil,
 			delButton,
-			layout.NewSpacer(),
 			widget.NewLabelWithData(dl.AllItemCount),
+			dl.SetPingView(),
 		),
 		space,
 		widget.NewSeparator(), // 分隔的線段
 		space,
 	)
 	return topView
+}
+
+func (dl *DeviceList) SetPingView() fyne.CanvasObject {
+	info := widget.NewButton("", func() {
+		d := dialog.NewInformation("INFORMATION", "this is message", fyne.CurrentApp().Driver().AllWindows()[0])
+		d.Show()
+	})
+	info.SetIcon(theme.InfoIcon())
+
+	//
+	entry := widget.NewEntry()
+	entry.ActionItem = info
+	entry.OnSubmitted = func(s string) {
+		fmt.Println("驗證正確")
+		alert := dialog.NewInformation("", "Do something after press btn", dl.Window)
+		alert.Show()
+	}
+	entry.PlaceHolder = "ping device, ex: 192.168.1.49"
+	return container.NewMax(container.NewBorder(
+		nil,
+		nil,
+		nil,
+		nil,
+		entry,
+	))
 }
 
 func (dl *DeviceList) SetTableView() *fyne.Container {

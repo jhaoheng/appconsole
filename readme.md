@@ -18,3 +18,10 @@
 ## 心得
 - table 中, 塞入圖片, 會讓 cell 變慢
 - 沒有 navagation controller
+
+## release
+> https://developer.fyne.io/started/packaging
+
+- `fyne package -os darwin --name demo`
+- `fyne package -os linux --name demo`
+- `fyne package -os windows --name demo`

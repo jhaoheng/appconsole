@@ -1,17 +1,17 @@
 package view_content
 
 import (
+	"appconsole/module"
 	"net/url"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
-	"fyne.io/fyne/v2/cmd/fyne_demo/data"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 )
 
 func WelcomeView(_ fyne.Window) *fyne.Container {
-	logo := canvas.NewImageFromResource(data.FyneScene)
+	logo := canvas.NewImageFromResource(fyne.NewStaticResource("", module.NewResourceOP(module.Resource).GetImage("resources/logo/logo.png")))
 	logo.FillMode = canvas.ImageFillContain
 	if fyne.CurrentDevice().IsMobile() {
 		logo.SetMinSize(fyne.NewSize(192, 192))
@@ -23,11 +23,11 @@ func WelcomeView(_ fyne.Window) *fyne.Container {
 		widget.NewLabelWithStyle("Welcome to the demo app", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
 		logo,
 		container.NewHBox(
-			widget.NewHyperlink("google", parseURL("https://fyne.io/")),
+			widget.NewHyperlink("google", parseURL("https://developers.google.com/")),
 			widget.NewLabel("-"),
-			widget.NewHyperlink("documentation", parseURL("https://developer.fyne.io/")),
+			widget.NewHyperlink("documentation", parseURL("https://developers.google.com/learn")),
 			widget.NewLabel("-"),
-			widget.NewHyperlink("sponsor", parseURL("https://fyne.io/sponsor/")),
+			widget.NewHyperlink("sponsor", parseURL("https://www.google.com/search?q=sponsor&oq=sponsor&aqs=chrome..69i57.3063j0j4&sourceid=chrome&ie=UTF-8")),
 		),
 		widget.NewLabel(""), // balance the header on the tutorial screen we leave blank on this content
 	))

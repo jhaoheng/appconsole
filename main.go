@@ -1,9 +1,11 @@
 package main
 
 import (
+	"embed"
 	"log"
 	"time"
 
+	"appconsole/module"
 	"appconsole/view"
 	mainmenu "appconsole/view/main_menu"
 
@@ -11,6 +13,9 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/driver/desktop"
 )
+
+//go:embed resources
+var resource embed.FS
 
 var (
 	Version    string = "develop ver"
@@ -27,6 +32,8 @@ func init() {
 }
 
 func main() {
+	module.Resource = &resource
+	//
 	myApp.Preferences().SetString("version", Version)
 	myApp.Preferences().SetString("buildDate", BuildDate)
 
@@ -63,7 +70,6 @@ func main() {
 	myApp.Run()
 }
 
-//
 func logLifecycle(a fyne.App) {
 	a.Lifecycle().SetOnStarted(func() {
 		log.Println("Lifecycle: Started")

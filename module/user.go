@@ -17,13 +17,12 @@ type IUser interface {
 }
 
 type User struct {
-	ID              int
-	MemberID        string
-	Name            string
-	Picture         []byte
-	PictureFilePath string
-	Phone           string
-	Gender          string
+	ID       int
+	MemberID string
+	Name     string
+	Picture  []byte
+	Phone    string
+	Gender   string
 }
 
 func NewUser() IUser {

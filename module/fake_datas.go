@@ -1,23 +1,37 @@
 package module
 
 import (
-	"io/ioutil"
+	"embed"
 
 	"github.com/google/uuid"
 )
 
-var pic = func(filename string) []byte {
-	b, err := ioutil.ReadFile(filename)
+//go:embed fake_pic
+var fakepic embed.FS
+
+var pic = func(file string) []byte {
+	data, err := fakepic.ReadFile(file)
 	if err != nil {
 		panic(err)
 	}
-	return b
+	return data
 }
 
 var FakeDataUsers = []User{
-	0: {ID: 1, Name: "strange_1", MemberID: uuid.New().String(), Picture: pic("./module/fake_pic_1.jpg"), Phone: "(02)1111111", Gender: "woman", PictureFilePath: "./module/fake_pic_1.jpg"},
-	1: {ID: 2, Name: "strange_2", MemberID: uuid.New().String(), Picture: pic("./module/fake_pic_2.jpg"), Phone: "(02)2222222", Gender: "woman", PictureFilePath: "./module/fake_pic_2.jpg"},
-	2: {ID: 3, Name: "strange_3", MemberID: uuid.New().String(), Picture: pic("./module/fake_pic_3.jpg"), Phone: "(02)3333333", Gender: "woman", PictureFilePath: "./module/fake_pic_3.jpg"},
-	3: {ID: 4, Name: "strange_4", MemberID: uuid.New().String(), Picture: pic("./module/fake_pic_4.jpg"), Phone: "(02)4444444", Gender: "woman", PictureFilePath: "./module/fake_pic_4.jpg"},
-	4: {ID: 5, Name: "strange_5", MemberID: uuid.New().String(), Picture: pic("./module/fake_pic_5.jpg"), Phone: "(02)5555555", Gender: "woman", PictureFilePath: "./module/fake_pic_5.jpg"},
+	0: {ID: 1, Name: "strange_1", MemberID: uuid.New().String(), Picture: pic("fake_pic/fake_pic_1.jpg"), Phone: "(02)1111111", Gender: "woman"},
+	1: {ID: 2, Name: "strange_2", MemberID: uuid.New().String(), Picture: pic("fake_pic/fake_pic_2.jpg"), Phone: "(02)2222222", Gender: "woman"},
+	2: {ID: 3, Name: "strange_3", MemberID: uuid.New().String(), Picture: pic("fake_pic/fake_pic_3.jpg"), Phone: "(02)3333333", Gender: "woman"},
+	3: {ID: 4, Name: "strange_4", MemberID: uuid.New().String(), Picture: pic("fake_pic/fake_pic_4.jpg"), Phone: "(02)4444444", Gender: "woman"},
+	4: {ID: 5, Name: "strange_5", MemberID: uuid.New().String(), Picture: pic("fake_pic/fake_pic_5.jpg"), Phone: "(02)5555555", Gender: "woman"},
+}
+
+var FakeDataDevices = []Device{
+	0: {
+		ID:           1,
+		Name:         "device_01",
+		IP:           "192.168.0.1",
+		MacAddress:   "xx:xx:xx:xx:xx:xx",
+		DeviceSerial: "J91322386",
+		Status:       true,
+	},
 }

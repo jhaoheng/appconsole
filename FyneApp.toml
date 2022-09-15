@@ -1,5 +1,5 @@
 [Details]
-  Icon = "resuorce/icons/smile.png"
+  Icon = "resources/logo/logo.png"
   Name = "App Console Demo"
   ID = "app.console.demo"
-  Build = 1
+  Build = 8

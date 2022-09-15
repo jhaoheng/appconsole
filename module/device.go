@@ -2,17 +2,6 @@ package module
 
 import "strings"
 
-var FakeDataDevices = []Device{
-	0: {
-		ID:           1,
-		Name:         "device_01",
-		IP:           "192.168.0.1",
-		MacAddress:   "xx:xx:xx:xx:xx:xx",
-		DeviceSerial: "J91322386",
-		Status:       true,
-	},
-}
-
 type IDevice interface {
 	Create(new *Device) bool
 	GetByDeviceSerial(serial_id string) Device

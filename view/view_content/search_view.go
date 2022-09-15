@@ -85,12 +85,12 @@ func NewSearch() *Search {
 func (s *Search) GetUserResult(search_key, search_value string) (keys []string, results []module.User, err error) {
 	keys = []string{}
 	if search_key == "name" {
-		results, err = module.NewUser().SetName(search_value).GetAll()
+		results, err = module.NewUser().SearchNameLike(search_value)
 		for _, result := range results {
 			keys = append(keys, result.Name)
 		}
 	} else if search_key == "member_id" {
-		results, err = module.NewUser().SetMemberID(search_value).GetAll()
+		results, err = module.NewUser().SearchMemberIDLike(search_value)
 		for _, result := range results {
 			keys = append(keys, result.MemberID)
 		}

@@ -1,5 +1,7 @@
 package module
 
+import "strings"
+
 type IUser interface {
 	SetName(name string) IUser
 	SetMemberID(mid string) IUser
@@ -10,6 +12,8 @@ type IUser interface {
 	List(num int, page int) []User
 	Del(id int) error
 	Count() int
+	SearchNameLike(name string) ([]User, error)
+	SearchMemberIDLike(mid string) ([]User, error)
 }
 
 type User struct {
@@ -73,4 +77,24 @@ func (u *User) Del(id int) error {
 
 func (u *User) Count() int {
 	return len(FakeDataUsers)
+}
+
+func (u *User) SearchNameLike(name string) ([]User, error) {
+	output := []User{}
+	for _, user := range FakeDataUsers {
+		if strings.Contains(user.Name, name) {
+			output = append(output, user)
+		}
+	}
+	return output, nil
+}
+
+func (u *User) SearchMemberIDLike(mid string) ([]User, error) {
+	output := []User{}
+	for _, user := range FakeDataUsers {
+		if strings.Contains(user.MemberID, mid) {
+			output = append(output, user)
+		}
+	}
+	return output, nil
 }

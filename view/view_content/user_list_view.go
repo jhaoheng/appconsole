@@ -20,7 +20,7 @@ import (
 var userList *UserList
 
 func UserListView(win fyne.Window) *fyne.Container {
-	userList = NewUserList(win, 50, 0).RefreshTableDatas()
+	userList = NewUserList(win, 50, 0).RefreshTableDatas([]module.User{})
 	userList.View = container.NewAdaptiveGrid(
 		1,
 		container.NewBorder(
@@ -38,7 +38,7 @@ func UserListView(win fyne.Window) *fyne.Container {
 	userList.NodataMaskContainer = userList.MyTableViewContainer.Objects[1].(*fyne.Container)
 
 	//
-	userList.RefreshTableDatas()
+	userList.RefreshTableDatas([]module.User{})
 	return userList.View
 }
 
@@ -90,7 +90,7 @@ func (ul *UserList) SetTopView() *fyne.Container {
 				item.Checkbox.Refresh()
 			}
 		}
-		userList.RefreshTableDatas()
+		userList.RefreshTableDatas([]module.User{})
 		ul.MyTableDelItems = []UserTableDelItem{}
 	})
 
@@ -102,7 +102,8 @@ func (ul *UserList) SetTopView() *fyne.Container {
 			delButton,
 			widget.NewLabelWithData(ul.AllItemCount),
 			SetUserSearchView([]string{"name", "member_id"}, func(result []module.User) {
-				ul.RefreshTableDatas()
+				ul.Datas = result
+				ul.RefreshTableDatas(result)
 			}),
 		),
 		space,
@@ -133,10 +134,12 @@ func (ul *UserList) SetTableView() *fyne.Container {
 	return myTableView
 }
 
-func (ul *UserList) RefreshTableDatas() *UserList {
+func (ul *UserList) RefreshTableDatas(user_datas []module.User) *UserList {
 	//
 	ul.Tabledatas = []binding.Struct{}
-	ul.Datas = module.NewUser().List(ul.NumOfPage, ul.Page)
+	if len(user_datas) == 0 {
+		ul.Datas = module.NewUser().List(ul.NumOfPage, ul.Page)
+	}
 	for index := range ul.Datas {
 		ul.Tabledatas = append(ul.Tabledatas, binding.BindStruct(&ul.Datas[index]))
 	}
@@ -169,7 +172,7 @@ func (ul *UserList) SetAddButton() *fyne.Container {
 		}, func(new_user module.User) {
 			new_user.ID = module.NewUser().Count() + 1
 			module.NewUser().Create(&new_user)
-			ul.RefreshTableDatas()
+			ul.RefreshTableDatas([]module.User{})
 			SendNotification("Add User", "Success!!")
 		})
 		userEdit.ShowModalView()
@@ -250,7 +253,7 @@ func (ul *UserList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObjec
 		edit_btn.OnTapped = func() {
 			userEdit := NewUserEdit(ul.Window, ul.Datas[id.Row], func(edited_user module.User) {
 				ul.Datas[id.Row] = edited_user
-				ul.RefreshTableDatas()
+				ul.RefreshTableDatas([]module.User{})
 			})
 			userEdit.ShowModalView()
 		}

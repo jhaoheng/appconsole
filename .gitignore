@@ -1,3 +1,4 @@
 todo*
 *.ttc
 *.app
+dist/

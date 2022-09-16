@@ -25,7 +25,7 @@ jobs:
         name: download fyne
         run: |
           go install github.com/fyne-io/fyne-cross@latest && \
-          fyne-cross darwin
+          fyne-cross linux --pull
       -
         name: Upload assets
         uses: actions/upload-artifact@v2

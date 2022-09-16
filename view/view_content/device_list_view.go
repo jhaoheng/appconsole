@@ -16,10 +16,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var deviceList *DeviceList
+// var deviceList *DeviceList
 
 func DeviceListView(win fyne.Window) *fyne.Container {
-	deviceList = NewDeviceList(win, 50, 0).RefreshTableDatas()
+	deviceList := NewDeviceList(win, 50, 0).RefreshTableDatas()
 	deviceList.DeviceListView = container.NewAdaptiveGrid(
 		1,
 		container.NewBorder(
@@ -66,7 +66,7 @@ type DeviceTableDelItem struct {
 }
 
 func NewDeviceList(win fyne.Window, numOfPage, page int) *DeviceList {
-	deviceList = &DeviceList{
+	deviceList := &DeviceList{
 		Window:    win,
 		Page:      page,
 		NumOfPage: numOfPage,
@@ -74,14 +74,14 @@ func NewDeviceList(win fyne.Window, numOfPage, page int) *DeviceList {
 	return deviceList
 }
 
-func (dl *DeviceList) SetTopView() *fyne.Container {
+func (view *DeviceList) SetTopView() *fyne.Container {
 	// 可以透過 canvas 來製造畫面的 padding
 	space := canvas.NewLine(color.Transparent)
 	space.StrokeWidth = 5
 
 	//
 	delButton := widget.NewButton("delete", func() {
-		for _, item := range dl.MyTableDelItems {
+		for _, item := range view.MyTableDelItems {
 			if err := module.NewDevice().Del(item.DataID); err != nil {
 				logrus.Error(err)
 			} else {
@@ -89,8 +89,8 @@ func (dl *DeviceList) SetTopView() *fyne.Container {
 				item.Checkbox.Refresh()
 			}
 		}
-		deviceList.RefreshTableDatas()
-		dl.MyTableDelItems = []DeviceTableDelItem{}
+		view.RefreshTableDatas()
+		view.MyTableDelItems = []DeviceTableDelItem{}
 	})
 
 	//
@@ -99,8 +99,8 @@ func (dl *DeviceList) SetTopView() *fyne.Container {
 			nil,
 			nil,
 			delButton,
-			widget.NewLabelWithData(dl.AllItemCount),
-			dl.SetPingView(),
+			widget.NewLabelWithData(view.AllItemCount),
+			view.SetPingView(),
 		),
 		space,
 		widget.NewSeparator(), // 分隔的線段
@@ -109,7 +109,7 @@ func (dl *DeviceList) SetTopView() *fyne.Container {
 	return topView
 }
 
-func (dl *DeviceList) SetPingView() fyne.CanvasObject {
+func (view *DeviceList) SetPingView() fyne.CanvasObject {
 	info := widget.NewButton("", func() {
 		d := dialog.NewInformation("INFORMATION", "this is message", fyne.CurrentApp().Driver().AllWindows()[0])
 		d.Show()
@@ -121,7 +121,7 @@ func (dl *DeviceList) SetPingView() fyne.CanvasObject {
 	entry.ActionItem = info
 	entry.OnSubmitted = func(s string) {
 		fmt.Println("驗證正確")
-		alert := dialog.NewInformation("", "Do something after press btn", dl.Window)
+		alert := dialog.NewInformation("", "Do something after press btn", view.Window)
 		alert.Show()
 	}
 	entry.PlaceHolder = "ping device, ex: 192.168.1.49"
@@ -134,12 +134,12 @@ func (dl *DeviceList) SetPingView() fyne.CanvasObject {
 	))
 }
 
-func (dl *DeviceList) SetTableView() *fyne.Container {
+func (view *DeviceList) SetTableView() *fyne.Container {
 
 	table := widget.NewTable(
-		dl.tableSize,
-		dl.tableCreateCell,
-		dl.tableUpdateCell,
+		view.tableSize,
+		view.tableCreateCell,
+		view.tableUpdateCell,
 	)
 
 	table.SetColumnWidth(0, 34)  //
@@ -159,36 +159,36 @@ func (dl *DeviceList) SetTableView() *fyne.Container {
 	return myTableView
 }
 
-func (dl *DeviceList) RefreshTableDatas() *DeviceList {
+func (view *DeviceList) RefreshTableDatas() *DeviceList {
 	//
-	dl.Tabledatas = []binding.Struct{}
-	dl.Datas = module.NewDevice().List(dl.NumOfPage, dl.Page)
-	for index := range dl.Datas {
-		dl.Tabledatas = append(dl.Tabledatas, binding.BindStruct(&dl.Datas[index]))
+	view.Tabledatas = []binding.Struct{}
+	view.Datas = module.NewDevice().List(view.NumOfPage, view.Page)
+	for index := range view.Datas {
+		view.Tabledatas = append(view.Tabledatas, binding.BindStruct(&view.Datas[index]))
 	}
 
 	//
-	if dl.AllItemCount == nil {
-		dl.AllItemCount = binding.NewString()
+	if view.AllItemCount == nil {
+		view.AllItemCount = binding.NewString()
 	}
-	dl.AllItemCount.Set(fmt.Sprintf("all count : %v", len(dl.Tabledatas)))
+	view.AllItemCount.Set(fmt.Sprintf("all count : %v", len(view.Tabledatas)))
 
-	if deviceList.NodataMaskContainer != nil {
-		if len(deviceList.Datas) == 0 {
-			deviceList.NodataMaskContainer.Show()
+	if view.NodataMaskContainer != nil {
+		if len(view.Datas) == 0 {
+			view.NodataMaskContainer.Show()
 		} else {
-			deviceList.NodataMaskContainer.Hide()
+			view.NodataMaskContainer.Hide()
 		}
 	}
 
 	//
-	if deviceList.MyTableView != nil {
-		deviceList.MyTableView.Refresh()
+	if view.MyTableView != nil {
+		view.MyTableView.Refresh()
 	}
-	return dl
+	return view
 }
 
-func (dl *DeviceList) SetAddButton() *fyne.Container {
+func (view *DeviceList) SetAddButton() *fyne.Container {
 	addButton := widget.NewButton("", func() {
 		module.FakeDevices = append(module.FakeDevices, module.Device{
 			ID:           len(module.FakeDevices) + 1,
@@ -198,7 +198,7 @@ func (dl *DeviceList) SetAddButton() *fyne.Container {
 			DeviceSerial: "J91322386",
 			Status:       true,
 		})
-		dl.RefreshTableDatas()
+		view.RefreshTableDatas()
 		SendNotification("Add New Device", "Success")
 	})
 	addButton.SetIcon(theme.ContentAddIcon())
@@ -210,12 +210,12 @@ func (dl *DeviceList) SetAddButton() *fyne.Container {
 *******************/
 
 /**/
-func (dl *DeviceList) tableSize() (rows int, columns int) {
-	return len(deviceList.Tabledatas), 7
+func (view *DeviceList) tableSize() (rows int, columns int) {
+	return len(view.Tabledatas), 7
 }
 
 /**/
-func (dl *DeviceList) tableCreateCell() fyne.CanvasObject {
+func (view *DeviceList) tableCreateCell() fyne.CanvasObject {
 	c := container.NewMax(
 		widget.NewCheck("", func(ok bool) {}),
 		widget.NewLabel(""),
@@ -224,7 +224,7 @@ func (dl *DeviceList) tableCreateCell() fyne.CanvasObject {
 }
 
 /**/
-func (dl *DeviceList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObject) {
+func (view *DeviceList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObject) {
 	checkbox := cell.(*fyne.Container).Objects[0].(*widget.Check)
 	label := cell.(*fyne.Container).Objects[1].(*widget.Label)
 
@@ -244,41 +244,41 @@ func (dl *DeviceList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObj
 	switch id.Col {
 	case 0:
 		checkbox.OnChanged = func(ok bool) {
-			data_id := dl.tableCellGetValue(data_index, "ID").(int)
+			data_id := view.tableCellGetValue(data_index, "ID").(int)
 			if ok {
-				deviceList.MyTableDelItems = append(deviceList.MyTableDelItems, DeviceTableDelItem{
+				view.MyTableDelItems = append(view.MyTableDelItems, DeviceTableDelItem{
 					DataID:   data_id,
 					Checkbox: checkbox,
 					CellID:   id,
 				})
-				sort.Slice(deviceList.MyTableDelItems, func(i int, j int) bool { return i < j })
+				sort.Slice(view.MyTableDelItems, func(i int, j int) bool { return i < j })
 			} else {
-				for index, val := range deviceList.MyTableDelItems {
+				for index, val := range view.MyTableDelItems {
 					if val.DataID == data_id {
-						deviceList.MyTableDelItems = append(deviceList.MyTableDelItems[:index], deviceList.MyTableDelItems[index+1:]...)
+						view.MyTableDelItems = append(view.MyTableDelItems[:index], view.MyTableDelItems[index+1:]...)
 					}
 				}
 			}
 		}
 	case 1:
-		label.SetText(fmt.Sprintf("%d", dl.tableCellGetValue(data_index, "ID").(int)))
+		label.SetText(fmt.Sprintf("%d", view.tableCellGetValue(data_index, "ID").(int)))
 	case 2:
-		label.SetText(dl.tableCellGetValue(data_index, "Name").(string))
+		label.SetText(view.tableCellGetValue(data_index, "Name").(string))
 	case 3:
-		label.SetText(dl.tableCellGetValue(data_index, "IP").(string))
+		label.SetText(view.tableCellGetValue(data_index, "IP").(string))
 	case 4:
-		label.SetText(dl.tableCellGetValue(data_index, "MacAddress").(string))
+		label.SetText(view.tableCellGetValue(data_index, "MacAddress").(string))
 	case 5:
-		label.SetText(dl.tableCellGetValue(data_index, "DeviceSerial").(string))
+		label.SetText(view.tableCellGetValue(data_index, "DeviceSerial").(string))
 	case 6:
-		label.SetText(fmt.Sprintf("%v", dl.tableCellGetValue(data_index, "Status").(bool)))
+		label.SetText(fmt.Sprintf("%v", view.tableCellGetValue(data_index, "Status").(bool)))
 	default:
 		label.SetText("undefined cell")
 	}
 }
 
-func (dl *DeviceList) tableCellGetValue(index int, key string) interface{} {
-	val, err := deviceList.Tabledatas[index].GetValue(key)
+func (view *DeviceList) tableCellGetValue(index int, key string) interface{} {
+	val, err := view.Tabledatas[index].GetValue(key)
 	if err != nil {
 		logrus.Error(err)
 		return nil
@@ -286,7 +286,7 @@ func (dl *DeviceList) tableCellGetValue(index int, key string) interface{} {
 	return val
 }
 
-// func (dl *DeviceList) tableSetHead(id widget.TableCellID, cell fyne.CanvasObject) {
+// func (view *DeviceList) tableSetHead(id widget.TableCellID, cell fyne.CanvasObject) {
 // 	if id.Row != 0 {
 // 		return
 // 	}

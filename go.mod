@@ -5,7 +5,6 @@ go 1.18
 require (
 	fyne.io/fyne/v2 v2.2.3
 	fyne.io/x/fyne v0.0.0-20220811211558-27fab34c671c
-	github.com/flopp/go-findfont v0.1.0
 	github.com/google/uuid v1.1.2
 	github.com/sirupsen/logrus v1.8.1
 )

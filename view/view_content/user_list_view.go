@@ -192,9 +192,12 @@ func (view *UserList) tableSize() (rows int, columns int) {
 
 /**/
 func (view *UserList) tableCreateCell() fyne.CanvasObject {
+
+	label := widget.NewLabel("")
+	label.Wrapping = fyne.TextTruncate
 	c := container.NewMax(
 		widget.NewCheck("", func(ok bool) {}),
-		widget.NewLabel(""),
+		label,
 		container.NewCenter(widget.NewButton("edit", func() {})),
 	)
 	return c

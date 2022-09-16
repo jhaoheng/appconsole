@@ -90,7 +90,7 @@ func (view *UserLog) SetTableView() *fyne.Container {
 	table.SetColumnWidth(0, 34)  //
 	table.SetColumnWidth(1, 100) //
 	table.SetColumnWidth(2, 170) //
-	table.SetColumnWidth(3, 120) //
+	table.SetColumnWidth(3, 150) //
 	table.SetColumnWidth(4, 170) //
 	//
 	myTableView := container.NewMax(
@@ -142,8 +142,10 @@ func (view *UserLog) tableSize() (rows int, columns int) {
 
 /**/
 func (view *UserLog) tableCreateCell() fyne.CanvasObject {
+	label := widget.NewLabel("")
+	label.Wrapping = fyne.TextTruncate
 	c := container.NewMax(
-		widget.NewLabel(""),
+		label,
 	)
 	return c
 }

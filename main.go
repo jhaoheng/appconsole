@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"log"
+	"os"
 	"time"
 
 	"appconsole/module"
@@ -21,17 +22,22 @@ var (
 	Version    string = "develop ver"
 	CommitCode string = ""
 	BuildDate  string = time.Now().Format("2006-01-02")
-	Title             = "AppConsole"
+	Title             = "app console"
 )
 
-var myApp = app.NewWithID("app.console.demo")
+var myApp fyne.App
 
 func init() {
-	makeTray(myApp)
-	logLifecycle(myApp)
+	os.Setenv("FYNE_FONT", "resources/fonts/STHeiti Light.ttc")
 }
 
 func main() {
+	myApp = app.New()
+	myApp = app.NewWithID("app.console.demo")
+	//
+	makeTray(myApp)
+	logLifecycle(myApp)
+	//
 	module.Resource = &resource
 	//
 	myApp.Preferences().SetString("version", Version)
@@ -68,6 +74,7 @@ func main() {
 
 	//
 	myApp.Run()
+	os.Unsetenv("FYNE_FONT")
 }
 
 func logLifecycle(a fyne.App) {

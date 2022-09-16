@@ -16,7 +16,7 @@
 
 
 ## 心得
-- table 中, 塞入圖片, 會讓 cell 變慢
+- table 中, 塞入圖片, 會讓 cell 變慢 (應該是 io 問題, 要做 cache)
 - 沒有 navagation controller
 
 ## release

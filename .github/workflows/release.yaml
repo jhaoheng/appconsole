@@ -22,12 +22,11 @@ jobs:
       - 
         name: download fyne
         run: |
-          go install fyne.io/fyne/v2/cmd/fyne@latest && \
-          fyne package -os darwin --name demo-darwin && \
-          mkdir dist && mv demo-darwin dist
+          go install github.com/fyne-io/fyne-cross@latest && \
+          fyne-cross darwin
       -
         name: Upload assets
         uses: actions/upload-artifact@v2
         with:
           name: myapp
-          path: dist/*
+          path: fyne-cross/*

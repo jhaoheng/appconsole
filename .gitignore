@@ -1,4 +1,4 @@
 todo*
 *.ttc
 *.app
-dist/
+fyne-cross

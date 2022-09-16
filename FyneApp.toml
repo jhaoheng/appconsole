@@ -2,4 +2,4 @@
   Icon = "resources/logo/logo.png"
   Name = "App Console Demo"
   ID = "app.console.demo"
-  Build = 1
+  Build = 0

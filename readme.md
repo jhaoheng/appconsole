@@ -1,7 +1,3 @@
-## 目前做到
-- 編輯, 應該是使用 widget 的 popup
-
-
 # readme
 
 - 離線版本, 跨平台桌面 application

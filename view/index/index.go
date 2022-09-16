@@ -32,13 +32,13 @@ var (
 		},
 		"log": {
 			Title: "Log",
-			Intro: "",
+			Intro: "Log is to collection the admin operation history and user access history.",
 			View:  nil,
 		},
-		"member_log": {
-			Title: "Member Access Log",
+		"user_log": {
+			Title: "User Access Log",
 			Intro: "",
-			View:  nil,
+			View:  viewcontent.UserLogView,
 		},
 		"admin_log": {
 			Title: "Admin Access Log",
@@ -55,7 +55,7 @@ var (
 	// ViewIndex  defines how our view should be laid out in the index tree
 	ViewIndex = map[string][]string{
 		"":         {"welcome", "device", "user", "log", "advanced"},
-		"log":      {"member_log", "admin_log"},
+		"log":      {"user_log", "admin_log"},
 		"advanced": {},
 	}
 )

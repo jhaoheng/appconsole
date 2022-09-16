@@ -190,8 +190,8 @@ func (dl *DeviceList) RefreshTableDatas() *DeviceList {
 
 func (dl *DeviceList) SetAddButton() *fyne.Container {
 	addButton := widget.NewButton("", func() {
-		module.FakeDataDevices = append(module.FakeDataDevices, module.Device{
-			ID:           len(module.FakeDataDevices) + 1,
+		module.FakeDevices = append(module.FakeDevices, module.Device{
+			ID:           len(module.FakeDevices) + 1,
 			Name:         "device_01",
 			IP:           "192.168.0.1",
 			MacAddress:   "xx:xx:xx:xx:xx:xx",

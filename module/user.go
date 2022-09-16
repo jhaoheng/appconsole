@@ -40,13 +40,13 @@ func (u *User) SetMemberID(mid string) IUser {
 }
 
 func (u *User) Create(newuser *User) bool {
-	FakeDataUsers = append(FakeDataUsers, *newuser)
+	FakeUsers = append(FakeUsers, *newuser)
 	return true
 }
 
 func (u *User) GetByID(id int) User {
 	output := User{}
-	for _, fakeuser := range FakeDataUsers {
+	for _, fakeuser := range FakeUsers {
 		if fakeuser.ID == id {
 			output = fakeuser
 			break
@@ -56,32 +56,33 @@ func (u *User) GetByID(id int) User {
 }
 
 func (u *User) GetAll() ([]User, error) {
-	return FakeDataUsers, nil
+	return FakeUsers, nil
 }
 
 func (u *User) List(num int, page int) []User {
-	return FakeDataUsers
+	return FakeUsers
 }
 
 func (u *User) Del(id int) error {
-	NewFakeDataUsers := []User{}
-	for _, v := range FakeDataUsers {
+	NewFakeUsers := []User{}
+	for _, v := range FakeUsers {
 		if v.ID != id {
-			NewFakeDataUsers = append(NewFakeDataUsers, v)
+			NewFakeUsers = append(NewFakeUsers, v)
 		}
 	}
-	FakeDataUsers = NewFakeDataUsers
+	FakeUsers = NewFakeUsers
 	return nil
 }
 
 func (u *User) Count() int {
-	return len(FakeDataUsers)
+	return len(FakeUsers)
 }
 
 func (u *User) SearchNameLike(name string) ([]User, error) {
 	output := []User{}
-	for _, user := range FakeDataUsers {
-		if strings.Contains(user.Name, name) {
+	name = strings.ToLower(name)
+	for _, user := range FakeUsers {
+		if strings.Contains(strings.ToLower(user.Name), name) {
 			output = append(output, user)
 		}
 	}
@@ -90,7 +91,7 @@ func (u *User) SearchNameLike(name string) ([]User, error) {
 
 func (u *User) SearchMemberIDLike(mid string) ([]User, error) {
 	output := []User{}
-	for _, user := range FakeDataUsers {
+	for _, user := range FakeUsers {
 		if strings.Contains(user.MemberID, mid) {
 			output = append(output, user)
 		}

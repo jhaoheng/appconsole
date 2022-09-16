@@ -13,8 +13,10 @@ import (
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+	xwidget "fyne.io/x/fyne/widget"
 )
 
 var userList *UserList
@@ -76,13 +78,13 @@ func NewUserList(win fyne.Window, numOfPage, page int) *UserList {
 	return userList
 }
 
-func (ul *UserList) SetTopView() *fyne.Container {
+func (view *UserList) SetTopView() *fyne.Container {
 	// 可以透過 canvas 來製造畫面的 padding
 	space := canvas.NewLine(color.Transparent)
 	space.StrokeWidth = 5
 	//
 	delButton := widget.NewButton("delete", func() {
-		for _, item := range ul.MyTableDelItems {
+		for _, item := range view.MyTableDelItems {
 			if err := module.NewUser().Del(item.DataID); err != nil {
 				logrus.Error(err)
 			} else {
@@ -91,7 +93,7 @@ func (ul *UserList) SetTopView() *fyne.Container {
 			}
 		}
 		userList.RefreshTableDatas([]module.User{})
-		ul.MyTableDelItems = []UserTableDelItem{}
+		view.MyTableDelItems = []UserTableDelItem{}
 	})
 
 	//
@@ -100,10 +102,10 @@ func (ul *UserList) SetTopView() *fyne.Container {
 			nil,
 			nil,
 			delButton,
-			widget.NewLabelWithData(ul.AllItemCount),
-			SetUserSearchView([]string{"name", "member_id"}, func(result []module.User) {
-				ul.Datas = result
-				ul.RefreshTableDatas(result)
+			widget.NewLabelWithData(view.AllItemCount),
+			view.SetUserSearchView([]string{"name", "member_id"}, func(result []module.User) {
+				view.Datas = result
+				view.RefreshTableDatas(result)
 			}),
 		),
 		space,
@@ -113,11 +115,11 @@ func (ul *UserList) SetTopView() *fyne.Container {
 	return topView
 }
 
-func (ul *UserList) SetTableView() *fyne.Container {
+func (view *UserList) SetTableView() *fyne.Container {
 	table := widget.NewTable(
-		ul.tableSize,
-		ul.tableCreateCell,
-		ul.tableUpdateCell,
+		view.tableSize,
+		view.tableCreateCell,
+		view.tableUpdateCell,
 	)
 	table.SetColumnWidth(0, 34)  //
 	table.SetColumnWidth(1, 34)  //
@@ -134,21 +136,21 @@ func (ul *UserList) SetTableView() *fyne.Container {
 	return myTableView
 }
 
-func (ul *UserList) RefreshTableDatas(user_datas []module.User) *UserList {
+func (view *UserList) RefreshTableDatas(user_datas []module.User) *UserList {
 	//
-	ul.Tabledatas = []binding.Struct{}
+	view.Tabledatas = []binding.Struct{}
 	if len(user_datas) == 0 {
-		ul.Datas = module.NewUser().List(ul.NumOfPage, ul.Page)
+		view.Datas = module.NewUser().List(view.NumOfPage, view.Page)
 	}
-	for index := range ul.Datas {
-		ul.Tabledatas = append(ul.Tabledatas, binding.BindStruct(&ul.Datas[index]))
+	for index := range view.Datas {
+		view.Tabledatas = append(view.Tabledatas, binding.BindStruct(&view.Datas[index]))
 	}
 
 	//
-	if ul.AllItemCount == nil {
-		ul.AllItemCount = binding.NewString()
+	if view.AllItemCount == nil {
+		view.AllItemCount = binding.NewString()
 	}
-	ul.AllItemCount.Set(fmt.Sprintf("all count : %v", len(ul.Tabledatas)))
+	view.AllItemCount.Set(fmt.Sprintf("all count : %v", len(view.Tabledatas)))
 
 	if userList.NodataMaskContainer != nil {
 		if len(userList.Datas) == 0 {
@@ -162,17 +164,17 @@ func (ul *UserList) RefreshTableDatas(user_datas []module.User) *UserList {
 	if userList.MyTableView != nil {
 		userList.MyTableView.Refresh()
 	}
-	return ul
+	return view
 }
 
-func (ul *UserList) SetAddButton() *fyne.Container {
+func (view *UserList) SetAddButton() *fyne.Container {
 	addButton := widget.NewButton("", func() {
-		userEdit := NewUserEdit(ul.Window, module.User{
+		userEdit := NewUserEdit(view.Window, module.User{
 			MemberID: uuid.New().String(),
 		}, func(new_user module.User) {
 			new_user.ID = module.NewUser().Count() + 1
 			module.NewUser().Create(&new_user)
-			ul.RefreshTableDatas([]module.User{})
+			view.RefreshTableDatas([]module.User{})
 			SendNotification("Add User", "Success!!")
 		})
 		userEdit.ShowModalView()
@@ -186,12 +188,12 @@ func (ul *UserList) SetAddButton() *fyne.Container {
 *******************/
 
 /**/
-func (ul *UserList) tableSize() (rows int, columns int) {
+func (view *UserList) tableSize() (rows int, columns int) {
 	return len(userList.Tabledatas), 7
 }
 
 /**/
-func (ul *UserList) tableCreateCell() fyne.CanvasObject {
+func (view *UserList) tableCreateCell() fyne.CanvasObject {
 	c := container.NewMax(
 		widget.NewCheck("", func(ok bool) {}),
 		widget.NewLabel(""),
@@ -201,7 +203,7 @@ func (ul *UserList) tableCreateCell() fyne.CanvasObject {
 }
 
 /**/
-func (ul *UserList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObject) {
+func (view *UserList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObject) {
 	checkbox := cell.(*fyne.Container).Objects[0].(*widget.Check)
 	label := cell.(*fyne.Container).Objects[1].(*widget.Label)
 	edit_btn := cell.(*fyne.Container).Objects[2].(*fyne.Container).Objects[0].(*widget.Button)
@@ -223,7 +225,7 @@ func (ul *UserList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObjec
 	switch id.Col {
 	case 0:
 		checkbox.OnChanged = func(ok bool) {
-			data_id := ul.tableCellGetValue(id.Row, "ID").(int)
+			data_id := view.tableCellGetValue(id.Row, "ID").(int)
 			if ok {
 				userList.MyTableDelItems = append(userList.MyTableDelItems, UserTableDelItem{
 					DataID:   data_id,
@@ -240,20 +242,20 @@ func (ul *UserList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObjec
 			}
 		}
 	case 1:
-		label.SetText(fmt.Sprintf("%d", ul.tableCellGetValue(id.Row, "ID").(int)))
+		label.SetText(fmt.Sprintf("%d", view.tableCellGetValue(id.Row, "ID").(int)))
 	case 2:
-		label.SetText(ul.tableCellGetValue(id.Row, "MemberID").(string))
+		label.SetText(view.tableCellGetValue(id.Row, "MemberID").(string))
 	case 3:
-		label.SetText(ul.tableCellGetValue(id.Row, "Name").(string))
+		label.SetText(view.tableCellGetValue(id.Row, "Name").(string))
 	case 4:
-		label.SetText(ul.tableCellGetValue(id.Row, "Phone").(string))
+		label.SetText(view.tableCellGetValue(id.Row, "Phone").(string))
 	case 5:
-		label.SetText(ul.tableCellGetValue(id.Row, "Gender").(string))
+		label.SetText(view.tableCellGetValue(id.Row, "Gender").(string))
 	case 6:
 		edit_btn.OnTapped = func() {
-			userEdit := NewUserEdit(ul.Window, ul.Datas[id.Row], func(edited_user module.User) {
-				ul.Datas[id.Row] = edited_user
-				ul.RefreshTableDatas([]module.User{})
+			userEdit := NewUserEdit(view.Window, view.Datas[id.Row], func(edited_user module.User) {
+				view.Datas[id.Row] = edited_user
+				view.RefreshTableDatas([]module.User{})
 			})
 			userEdit.ShowModalView()
 		}
@@ -262,11 +264,105 @@ func (ul *UserList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObjec
 	}
 }
 
-func (ul *UserList) tableCellGetValue(index int, key string) interface{} {
+func (view *UserList) tableCellGetValue(index int, key string) interface{} {
 	val, err := userList.Tabledatas[index].GetValue(key)
 	if err != nil {
 		logrus.Error(err)
 		return nil
 	}
 	return val
+}
+
+/******************
+****** Search ******
+*******************/
+
+func (view *UserList) SetUserSearchView(search_keys []string, callback func(search_result []module.User)) fyne.CanvasObject {
+
+	var SelectedSearchKey string = ""
+
+	options := []string{} // 初始可選的範圍
+	entry := xwidget.NewCompletionEntry(options)
+	entry.ActionItem = func() fyne.CanvasObject {
+		btn := widget.NewButton("", func() {
+			dialog.NewInformation("INFORMATION", "this is message", fyne.CurrentApp().Driver().AllWindows()[0]).Show()
+		})
+		btn.SetIcon(theme.InfoIcon())
+		return btn
+	}()
+
+	// When the use typed text, complete the list.
+	entry.OnChanged = func(s string) {
+		// completion start for text length >= 2
+		if len(s) < 2 {
+			entry.HideCompletion()
+			return
+		}
+
+		//
+		keys, _, err := view.GetUserResult(SelectedSearchKey, s)
+		if err != nil {
+			logrus.Error(err)
+			entry.HideCompletion()
+			return
+		}
+
+		// no results
+		if len(keys) == 0 {
+			entry.HideCompletion()
+			return
+		}
+
+		// then show them
+		entry.SetOptions(keys) // 設定可選擇的內容
+		entry.ShowCompletion()
+	}
+
+	//
+	entry.OnCursorChanged = func() {
+	}
+
+	// 只有按下 button 時才有效, 不太友善
+	entry.OnSubmitted = func(s string) {
+		_, results, err := view.GetUserResult(SelectedSearchKey, s)
+		if err != nil {
+			logrus.Error(err)
+			entry.HideCompletion()
+			return
+		}
+		callback(results)
+	}
+
+	//
+	selectkeyview := widget.NewSelect(search_keys, func(s string) {
+		SelectedSearchKey = s
+	})
+	selectkeyview.SetSelectedIndex(0)
+
+	return container.NewMax(container.NewBorder(
+		nil,
+		nil,
+		selectkeyview,
+		nil,
+		entry,
+	))
+}
+
+func (view *UserList) GetUserResult(search_key, search_value string) (keys []string, results []module.User, err error) {
+	keys = []string{}
+	if search_key == "name" {
+		results, err = module.NewUser().SearchNameLike(search_value)
+		for _, result := range results {
+			keys = append(keys, result.Name)
+		}
+	} else if search_key == "member_id" {
+		results, err = module.NewUser().SearchMemberIDLike(search_value)
+		for _, result := range results {
+			keys = append(keys, result.MemberID)
+		}
+	} else {
+		err = fmt.Errorf("not set useful key")
+		return
+	}
+	return
 }

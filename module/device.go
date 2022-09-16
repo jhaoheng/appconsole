@@ -24,13 +24,13 @@ func NewDevice() IDevice {
 }
 
 func (d *Device) Create(new *Device) bool {
-	FakeDataDevices = append(FakeDataDevices, *new)
+	FakeDevices = append(FakeDevices, *new)
 	return true
 }
 
 func (d *Device) GetByDeviceSerial(serial_id string) Device {
 	output := Device{}
-	for _, fakedevice := range FakeDataDevices {
+	for _, fakedevice := range FakeDevices {
 		if strings.Compare(fakedevice.DeviceSerial, serial_id) == 0 {
 			output = fakedevice
 			break
@@ -40,20 +40,20 @@ func (d *Device) GetByDeviceSerial(serial_id string) Device {
 }
 
 func (d *Device) List(num int, page int) []Device {
-	return FakeDataDevices
+	return FakeDevices
 }
 
 func (d *Device) Del(id int) error {
-	NewFakeDataDevices := []Device{}
-	for _, v := range FakeDataDevices {
+	NewFakeDevices := []Device{}
+	for _, v := range FakeDevices {
 		if v.ID != id {
-			NewFakeDataDevices = append(NewFakeDataDevices, v)
+			NewFakeDevices = append(NewFakeDevices, v)
 		}
 	}
-	FakeDataDevices = NewFakeDataDevices
+	FakeDevices = NewFakeDevices
 	return nil
 }
 
 func (d *Device) Count() int {
-	return len(FakeDataDevices)
+	return len(FakeDevices)
 }

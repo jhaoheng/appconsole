@@ -19,10 +19,8 @@ import (
 	xwidget "fyne.io/x/fyne/widget"
 )
 
-var userList *UserList
-
 func UserListView(win fyne.Window) *fyne.Container {
-	userList = NewUserList(win, 50, 0).RefreshTableDatas([]module.User{})
+	userList := NewUserList(win, 50, 0).RefreshTableDatas([]module.User{})
 	userList.View = container.NewAdaptiveGrid(
 		1,
 		container.NewBorder(
@@ -70,7 +68,7 @@ type UserTableDelItem struct {
 }
 
 func NewUserList(win fyne.Window, numOfPage, page int) *UserList {
-	userList = &UserList{
+	userList := &UserList{
 		Window:    win,
 		Page:      page,
 		NumOfPage: numOfPage,
@@ -92,7 +90,7 @@ func (view *UserList) SetTopView() *fyne.Container {
 				item.Checkbox.Refresh()
 			}
 		}
-		userList.RefreshTableDatas([]module.User{})
+		view.RefreshTableDatas([]module.User{})
 		view.MyTableDelItems = []UserTableDelItem{}
 	})
 
@@ -152,17 +150,17 @@ func (view *UserList) RefreshTableDatas(user_datas []module.User) *UserList {
 	}
 	view.AllItemCount.Set(fmt.Sprintf("all count : %v", len(view.Tabledatas)))
 
-	if userList.NodataMaskContainer != nil {
-		if len(userList.Datas) == 0 {
-			userList.NodataMaskContainer.Show()
+	if view.NodataMaskContainer != nil {
+		if len(view.Datas) == 0 {
+			view.NodataMaskContainer.Show()
 		} else {
-			userList.NodataMaskContainer.Hide()
+			view.NodataMaskContainer.Hide()
 		}
 	}
 
 	//
-	if userList.MyTableView != nil {
-		userList.MyTableView.Refresh()
+	if view.MyTableView != nil {
+		view.MyTableView.Refresh()
 	}
 	return view
 }
@@ -189,7 +187,7 @@ func (view *UserList) SetAddButton() *fyne.Container {
 
 /**/
 func (view *UserList) tableSize() (rows int, columns int) {
-	return len(userList.Tabledatas), 7
+	return len(view.Tabledatas), 7
 }
 
 /**/
@@ -227,16 +225,16 @@ func (view *UserList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObj
 		checkbox.OnChanged = func(ok bool) {
 			data_id := view.tableCellGetValue(id.Row, "ID").(int)
 			if ok {
-				userList.MyTableDelItems = append(userList.MyTableDelItems, UserTableDelItem{
+				view.MyTableDelItems = append(view.MyTableDelItems, UserTableDelItem{
 					DataID:   data_id,
 					Checkbox: checkbox,
 					CellID:   id,
 				})
-				sort.Slice(userList.MyTableDelItems, func(i int, j int) bool { return i < j })
+				sort.Slice(view.MyTableDelItems, func(i int, j int) bool { return i < j })
 			} else {
-				for index, val := range userList.MyTableDelItems {
+				for index, val := range view.MyTableDelItems {
 					if val.DataID == data_id {
-						userList.MyTableDelItems = append(userList.MyTableDelItems[:index], userList.MyTableDelItems[index+1:]...)
+						view.MyTableDelItems = append(view.MyTableDelItems[:index], view.MyTableDelItems[index+1:]...)
 					}
 				}
 			}
@@ -265,7 +263,7 @@ func (view *UserList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObj
 }
 
 func (view *UserList) tableCellGetValue(index int, key string) interface{} {
-	val, err := userList.Tabledatas[index].GetValue(key)
+	val, err := view.Tabledatas[index].GetValue(key)
 	if err != nil {
 		logrus.Error(err)
 		return nil

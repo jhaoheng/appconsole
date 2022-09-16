@@ -15,8 +15,6 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-var userEdit *UserEdit
-
 type UserEdit struct {
 	Window            fyne.Window
 	UserEditView      *fyne.Container
@@ -33,7 +31,7 @@ type UserEdit struct {
 
 func NewUserEdit(window fyne.Window, user module.User, edited_callback func(edited module.User)) *UserEdit {
 	//
-	userEdit = &UserEdit{
+	userEdit := &UserEdit{
 		Window:          window,
 		UserBinding:     binding.BindStruct(&user),
 		edited_callback: edited_callback,
@@ -130,7 +128,7 @@ func (ue *UserEdit) SetContent() fyne.CanvasObject {
 		},
 		OnSubmit: func() {
 			user := &module.User{
-				ID:       5,
+				ID:       ue.GetUserData("ID").(int),
 				MemberID: ue.GetUserData("MemberID").(string),
 				Name:     NameEntry.Text,
 				Phone:    PhoneEntry.Text,
@@ -141,10 +139,10 @@ func (ue *UserEdit) SetContent() fyne.CanvasObject {
 				}(),
 			}
 			ue.edited_callback(*user)
-			userEdit.HideModalView()
+			ue.HideModalView()
 		},
 		OnCancel: func() {
-			userEdit.HideModalView()
+			ue.HideModalView()
 		},
 	}
 	// we can also append items

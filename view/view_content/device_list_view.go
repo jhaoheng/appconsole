@@ -16,8 +16,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// var deviceList *DeviceList
-
 func DeviceListView(win fyne.Window) *fyne.Container {
 	deviceList := NewDeviceList(win, 50, 0).RefreshTableDatas()
 	deviceList.DeviceListView = container.NewAdaptiveGrid(

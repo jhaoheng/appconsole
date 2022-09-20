@@ -28,7 +28,7 @@ var (
 var myApp fyne.App
 
 func init() {
-	os.Setenv("FYNE_FONT", "resources/fonts/STHeiti Light.ttc")
+	module.LoadFont()
 }
 
 func main() {
@@ -74,6 +74,7 @@ func main() {
 
 	//
 	myApp.Run()
+	//
 	os.Unsetenv("FYNE_FONT")
 }
 

@@ -24,19 +24,20 @@ jobs:
       - 
         name: fyne-cross
         run: |
+          version=$(git describe --tags --abbrev=0) &&\
           go install github.com/fyne-io/fyne-cross@latest && \
-          fyne-cross linux --pull && \
-          fyne-cross windows --pull
+          fyne-cross linux --pull -app-version $version && \
+          fyne-cross windows --pull -app-version $version
+      - 
+        name: generate checksum
+        run: |
+          shasum -a 512 fyne-cross/dist/linux-amd64/* > linux-amd64-checksum && \
+          shasum -a 512 fyne-cross/dist/windows-amd64/* > windows-amd64-checksum
       - 
         name: tar fyne-cross output
         run: |
-          tar zcvf linux-amd64.tar.gz fyne-cross/dist/linux-amd64/ && \
-          tar zcvf windows-amd64.tar.gz fyne-cross/dist/windows-amd64/
-      - 
-        name: checksum
-        run: |
-          shasum -a 512 linux-amd64.tar.gz > linux-amd64-checksum && \
-          shasum -a 512 windows-amd64.tar.gz > windows-amd64-checksum
+          tar zcvf linux-amd64.tar.gz fyne-cross/dist/linux-amd64/ linux-amd64-checksum && \
+          tar zcvf windows-amd64.tar.gz fyne-cross/dist/windows-amd64/ windows-amd64-checksum
       - 
         name: github release
         uses: ncipollo/release-action@v1

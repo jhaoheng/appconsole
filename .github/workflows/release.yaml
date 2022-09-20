@@ -24,7 +24,7 @@ jobs:
       - 
         name: fyne-cross
         run: |
-          version=$(git describe --tags --abbrev=0 | sed 's/v//g) &&\
+          version=$(git describe --tags --abbrev=0 | sed 's/v//g') &&\
           go install github.com/fyne-io/fyne-cross@latest && \
           fyne-cross linux --pull -app-version $version && \
           fyne-cross windows --pull -app-version $version

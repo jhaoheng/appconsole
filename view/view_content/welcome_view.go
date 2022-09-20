@@ -1,6 +1,7 @@
 package view_content
 
 import (
+	"appconsole/config"
 	"appconsole/module"
 	"net/url"
 
@@ -11,7 +12,7 @@ import (
 )
 
 func WelcomeView(_ fyne.Window) *fyne.Container {
-	logo := canvas.NewImageFromResource(fyne.NewStaticResource("", module.NewResourceOP(module.Resource).GetImage("resources/logo/logo.png")))
+	logo := canvas.NewImageFromResource(fyne.NewStaticResource("", module.NewResourceOP(config.Setting.Resource).GetImage("resources/logo/logo.png")))
 	logo.FillMode = canvas.ImageFillContain
 	if fyne.CurrentDevice().IsMobile() {
 		logo.SetMinSize(fyne.NewSize(192, 192))

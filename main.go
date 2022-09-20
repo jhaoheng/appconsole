@@ -14,8 +14,6 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/driver/desktop"
-	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v3"
 )
 
 //go:embed resources
@@ -36,17 +34,12 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	if err := yaml.Unmarshal(b, &config.Setting); err != nil {
-		panic(err)
-	}
 
 	//
-	conf := config.NewConfig(config.Setting.Env)
+	conf := config.NewConfig(b, &resource)
 	module.SetLog(conf)
-	module.Resource = &resource
 	module.LoadFont()
-	//
-	logrus.Infof("success load environment is %v", config.Setting.Env)
+	conf.Show()
 }
 
 func main() {
@@ -58,7 +51,6 @@ func main() {
 	logLifecycle(myApp)
 	//
 	myApp.Preferences().SetString("version", myApp.Metadata().Version)
-	myApp.Preferences().SetString("buildDate", BuildDate)
 	//
 	myWindow := myApp.NewWindow(Title)
 	myWindow.SetMainMenu(mainmenu.MakeMenu(myApp, myWindow))

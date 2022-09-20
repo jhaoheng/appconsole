@@ -5,22 +5,18 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-func set_prod() *EnvConfig {
-	return &EnvConfig{
-		Env:       "prod",
-		LogLevel:  logrus.InfoLevel,
-		LogOutput: SetLogPosition("./log"),
-		LogFormat: &logrus.JSONFormatter{
-			TimestampFormat: "2006-01-02 15:04:05",
-		},
-		//
-		DBSInfo: &Database{
-			User:         "",
-			Password:     "",
-			Host:         "localhost",
-			Port:         "3306",
-			DatabaseName: "appconsole",
-		},
+func set_prod(conf *EnvConfig) {
+	conf.LogLevel = logrus.InfoLevel
+	conf.LogOutput = SetLogPosition("./log")
+	conf.LogFormat = &logrus.TextFormatter{
+		TimestampFormat: "2006-01-02 15:04:05",
+	}
+	conf.DBSInfo = &Database{
+		User:         "",
+		Password:     "",
+		Host:         "localhost",
+		Port:         "3306",
+		DatabaseName: "appconsole",
 	}
 }
 

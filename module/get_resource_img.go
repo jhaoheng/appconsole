@@ -2,8 +2,6 @@ package module
 
 import "embed"
 
-var Resource *embed.FS
-
 type ResourceOP struct {
 	Resource *embed.FS
 }

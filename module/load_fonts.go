@@ -39,7 +39,7 @@ func LoadFont() {
 	// 	panic(err)
 	// }
 
-	logrus.Infof("Load font setting from: %v\n", defaultFontPath)
+	logrus.Infof("Load font setting from: %v", defaultFontPath)
 
 	os.Setenv("FYNE_FONT", defaultFontPath)
 }

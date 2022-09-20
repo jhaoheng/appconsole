@@ -34,9 +34,13 @@ jobs:
           shasum -a 512 fyne-cross/dist/linux-amd64/* > linux-amd64-checksum && \
           shasum -a 512 fyne-cross/dist/windows-amd64/* > windows-amd64-checksum
       - 
-        name: export git commit code
+        name: export the env.yaml
         run: |
-          git rev-list -1 HEAD > commit
+          rm env.yaml && \
+          echo "env: prod" >> env.yaml && \
+          echo "commit_code: $(git rev-list -1 HEAD)" >> env.yaml && \
+          echo "version: $(git describe --tags --abbrev=0)" >> env.yaml && \
+          cat env.yaml
       - 
         name: tar files
         run: |

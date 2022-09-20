@@ -89,7 +89,7 @@ func buildLeftCanvas(myWindow fyne.Window, setContent func(v index.ViewInfo), lo
 		myApp.Preferences().SetBool("remember_me", false)
 		myWindow.Close()
 	})
-	info_text := fmt.Sprintf("%v - %v", a.Preferences().String("version"), a.Preferences().String("buildDate"))
+	info_text := fmt.Sprintf("%v", a.Preferences().String("version"))
 	info := container.NewVBox(
 		container.NewHBox(logout_btn),
 		widget.NewLabel(info_text),

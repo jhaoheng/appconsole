@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"appconsole/config"
 	"appconsole/module"
 	"appconsole/view"
 	mainmenu "appconsole/view/main_menu"
@@ -13,36 +14,51 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/driver/desktop"
+	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v3"
 )
 
 //go:embed resources
 var resource embed.FS
 
+//go:embed env.yaml
+var env embed.FS
+
 var (
-	Version    string = "develop ver"
-	CommitCode string = ""
-	BuildDate  string = time.Now().Format("2006-01-02")
-	Title             = "app console"
+	BuildDate string = time.Now().Format("2006-01-02")
+	Title            = "demo"
 )
 
 var myApp fyne.App
 
 func init() {
+	b, err := env.ReadFile("env.yaml")
+	if err != nil {
+		panic(err)
+	}
+	if err := yaml.Unmarshal(b, &config.Setting); err != nil {
+		panic(err)
+	}
+
+	//
+	conf := config.NewConfig(config.Setting.Env)
+	module.SetLog(conf)
+	module.Resource = &resource
 	module.LoadFont()
+	//
+	logrus.Infof("success load environment is %v", config.Setting.Env)
 }
 
 func main() {
+	//
 	myApp = app.New()
 	myApp = app.NewWithID("app.console.demo")
 	//
 	makeTray(myApp)
 	logLifecycle(myApp)
 	//
-	module.Resource = &resource
-	//
-	myApp.Preferences().SetString("version", Version)
+	myApp.Preferences().SetString("version", myApp.Metadata().Version)
 	myApp.Preferences().SetString("buildDate", BuildDate)
-
 	//
 	myWindow := myApp.NewWindow(Title)
 	myWindow.SetMainMenu(mainmenu.MakeMenu(myApp, myWindow))

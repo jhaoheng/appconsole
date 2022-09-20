@@ -34,10 +34,14 @@ jobs:
           shasum -a 512 fyne-cross/dist/linux-amd64/* > linux-amd64-checksum && \
           shasum -a 512 fyne-cross/dist/windows-amd64/* > windows-amd64-checksum
       - 
+        name: export git commit code
+        run: |
+          git rev-list -1 HEAD > commit
+      - 
         name: tar files
         run: |
-          tar zcvf linux-amd64.tar.gz fyne-cross/dist/linux-amd64/ linux-amd64-checksum && \
-          tar zcvf windows-amd64.tar.gz fyne-cross/dist/windows-amd64/ windows-amd64-checksum
+          tar zcvf linux-amd64.tar.gz fyne-cross/dist/linux-amd64/ linux-amd64-checksum commit && \
+          tar zcvf windows-amd64.tar.gz fyne-cross/dist/windows-amd64/ windows-amd64-checksum commit
       - 
         name: github push release
         uses: ncipollo/release-action@v1

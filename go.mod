@@ -8,6 +8,7 @@ require (
 	github.com/flopp/go-findfont v0.1.0
 	github.com/google/uuid v1.1.2
 	github.com/sirupsen/logrus v1.8.1
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
 require (

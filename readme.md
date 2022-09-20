@@ -9,9 +9,9 @@
 ## build
 - `make darwin`
 
-## release
+## release by fyne package
 > https://developer.fyne.io/started/packaging
 
-- `fyne package -os darwin --name demo --appVersion $(git describe --tags --abbrev=0)`
+- `fyne package -os darwin --name demo`
 - `fyne package -os linux --name demo`
 - `fyne package -os windows --name demo`

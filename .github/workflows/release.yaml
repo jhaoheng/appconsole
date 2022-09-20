@@ -24,7 +24,7 @@ jobs:
       - 
         name: fyne-cross
         run: |
-          version=$(git describe --tags --abbrev=0) &&\
+          version=$(git describe --tags --abbrev=0 | sed 's/v//g) &&\
           go install github.com/fyne-io/fyne-cross@latest && \
           fyne-cross linux --pull -app-version $version && \
           fyne-cross windows --pull -app-version $version
@@ -34,14 +34,14 @@ jobs:
           shasum -a 512 fyne-cross/dist/linux-amd64/* > linux-amd64-checksum && \
           shasum -a 512 fyne-cross/dist/windows-amd64/* > windows-amd64-checksum
       - 
-        name: tar fyne-cross output
+        name: tar files
         run: |
           tar zcvf linux-amd64.tar.gz fyne-cross/dist/linux-amd64/ linux-amd64-checksum && \
           tar zcvf windows-amd64.tar.gz fyne-cross/dist/windows-amd64/ windows-amd64-checksum
       - 
-        name: github release
+        name: github push release
         uses: ncipollo/release-action@v1
         with:
           artifacts: "*.tar.gz,*checksum"
-          bodyFile: "readme.md" # release 時的說明檔案
+          bodyFile: "readme.md"
           token: ${{ secrets.RELEASE }}

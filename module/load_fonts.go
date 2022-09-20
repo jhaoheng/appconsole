@@ -34,10 +34,10 @@ func LoadFont() {
 		}
 	}
 
-	_, err := os.ReadFile(defaultFontPath)
-	if err != nil {
-		panic(err)
-	}
+	// _, err := os.ReadFile(defaultFontPath)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
 	logrus.Infof("Load font setting from: %v\n", defaultFontPath)
 

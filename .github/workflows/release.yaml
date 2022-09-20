@@ -42,6 +42,6 @@ jobs:
         name: github push release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "*.tar.gz,*checksum"
+          artifacts: "*.tar.gz"
           bodyFile: "readme.md"
           token: ${{ secrets.RELEASE }}

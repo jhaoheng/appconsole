@@ -8,6 +8,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       -
         name: Checkout
@@ -20,13 +22,25 @@ jobs:
         with:
           go-version: 1.18
       - 
-        name: download fyne
+        name: fyne-cross
         run: |
           go install github.com/fyne-io/fyne-cross@latest && \
-          fyne-cross linux --pull
-      -
-        name: Upload assets
-        uses: actions/upload-artifact@v2
+          fyne-cross linux --pull && \
+          fyne-cross windows --pull
+      - 
+        name: tar fyne-cross output
+        run: |
+          tar zcvf linux-amd64.tar.gz fyne-cross/dist/linux-amd64/ && \
+          tar zcvf windows-amd64.tar.gz fyne-cross/dist/windows-amd64/
+      - 
+        name: checksum
+        run: |
+          shasum -a 512 linux-amd64.tar.gz > linux-amd64-checksum && \
+          shasum -a 512 windows-amd64.tar.gz > windows-amd64-checksum
+      - 
+        name: github release
+        uses: ncipollo/release-action@v1
         with:
-          name: myapp
-          path: fyne-cross/*
+          artifacts: "*.tar.gz,*checksum"
+          bodyFile: "readme.md" # release 時的說明檔案
+          token: ${{ secrets.RELEASE }}

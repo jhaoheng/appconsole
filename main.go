@@ -61,7 +61,7 @@ func main() {
 		loginWindow.Resize(fyne.NewSize(400, 150))
 		loginWindow.CenterOnScreen()
 		loginWindow.SetContent(view.LoginContent(loginWindow))
-		loginWindow.SetFixedSize(true)
+		// loginWindow.SetFixedSize(true)
 		loginWindow.SetMaster()
 		loginWindow.Show()
 		//

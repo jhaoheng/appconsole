@@ -77,9 +77,6 @@ func NewUserList(win fyne.Window, numOfPage, page int) *UserList {
 }
 
 func (view *UserList) SetTopView() *fyne.Container {
-	// 可以透過 canvas 來製造畫面的 padding
-	space := canvas.NewLine(color.Transparent)
-	space.StrokeWidth = 5
 	//
 	delButton := widget.NewButton("delete", func() {
 		for _, item := range view.MyTableDelItems {
@@ -106,9 +103,9 @@ func (view *UserList) SetTopView() *fyne.Container {
 				view.RefreshTableDatas(result)
 			}),
 		),
-		space,
+		canvas.NewLine(color.Transparent),
 		widget.NewSeparator(), // 分隔的線段
-		space,
+		canvas.NewLine(color.Transparent),
 	)
 	return topView
 }
@@ -192,13 +189,17 @@ func (view *UserList) tableSize() (rows int, columns int) {
 
 /**/
 func (view *UserList) tableCreateCell() fyne.CanvasObject {
-
 	label := widget.NewLabel("")
 	label.Wrapping = fyne.TextTruncate
+	label.Alignment = fyne.TextAlignCenter
+	//
+	editBtn := widget.NewButton("edit", func() {})
+	editBtn.Hide()
+	//
 	c := container.NewMax(
 		widget.NewCheck("", func(ok bool) {}),
 		label,
-		container.NewCenter(widget.NewButton("edit", func() {})),
+		editBtn,
 	)
 	return c
 }
@@ -207,24 +208,17 @@ func (view *UserList) tableCreateCell() fyne.CanvasObject {
 func (view *UserList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObject) {
 	checkbox := cell.(*fyne.Container).Objects[0].(*widget.Check)
 	label := cell.(*fyne.Container).Objects[1].(*widget.Label)
-	edit_btn := cell.(*fyne.Container).Objects[2].(*fyne.Container).Objects[0].(*widget.Button)
+	edit_btn := cell.(*fyne.Container).Objects[2].(*widget.Button)
 
 	//
 	checkbox.Hide()
 	label.Hide()
 	edit_btn.Hide()
-	//
-	if id.Col == 0 {
-		checkbox.Show()
-	} else if id.Col == 6 {
-		edit_btn.Show()
-	} else {
-		label.Show()
-	}
 
 	//
 	switch id.Col {
 	case 0:
+		checkbox.Show()
 		checkbox.OnChanged = func(ok bool) {
 			data_id := view.tableCellGetValue(id.Row, "ID").(int)
 			if ok {
@@ -243,16 +237,22 @@ func (view *UserList) tableUpdateCell(id widget.TableCellID, cell fyne.CanvasObj
 			}
 		}
 	case 1:
+		label.Show()
 		label.SetText(fmt.Sprintf("%d", view.tableCellGetValue(id.Row, "ID").(int)))
 	case 2:
+		label.Show()
 		label.SetText(view.tableCellGetValue(id.Row, "MemberID").(string))
 	case 3:
+		label.Show()
 		label.SetText(view.tableCellGetValue(id.Row, "Name").(string))
 	case 4:
+		label.Show()
 		label.SetText(view.tableCellGetValue(id.Row, "Phone").(string))
 	case 5:
+		label.Show()
 		label.SetText(view.tableCellGetValue(id.Row, "Gender").(string))
 	case 6:
+		edit_btn.Show()
 		edit_btn.OnTapped = func() {
 			userEdit := NewUserEdit(view.Window, view.Datas[id.Row], func(edited_user module.User) {
 				view.Datas[id.Row] = edited_user

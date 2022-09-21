@@ -35,6 +35,14 @@ var FakeDevices = []Device{
 		DeviceSerial: "J91322386",
 		Status:       true,
 	},
+	1: {
+		ID:           2,
+		Name:         "device_01",
+		IP:           "192.168.0.1",
+		MacAddress:   "xx:xx:xx:xx:xx:xx",
+		DeviceSerial: "J91322386",
+		Status:       true,
+	},
 }
 
 var FakeUserLogs = []UserLog{

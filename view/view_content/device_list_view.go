@@ -73,10 +73,6 @@ func NewDeviceList(win fyne.Window, numOfPage, page int) *DeviceList {
 }
 
 func (view *DeviceList) SetTopView() *fyne.Container {
-	// 可以透過 canvas 來製造畫面的 padding
-	space := canvas.NewLine(color.Transparent)
-	space.StrokeWidth = 5
-
 	//
 	delButton := widget.NewButton("delete", func() {
 		for _, item := range view.MyTableDelItems {
@@ -100,9 +96,9 @@ func (view *DeviceList) SetTopView() *fyne.Container {
 			widget.NewLabelWithData(view.AllItemCount),
 			view.SetPingView(),
 		),
-		space,
+		canvas.NewLine(color.Transparent),
 		widget.NewSeparator(), // 分隔的線段
-		space,
+		canvas.NewLine(color.Transparent),
 	)
 	return topView
 }
@@ -133,13 +129,11 @@ func (view *DeviceList) SetPingView() fyne.CanvasObject {
 }
 
 func (view *DeviceList) SetTableView() *fyne.Container {
-
 	table := widget.NewTable(
 		view.tableSize,
 		view.tableCreateCell,
 		view.tableUpdateCell,
 	)
-
 	table.SetColumnWidth(0, 34)  //
 	table.SetColumnWidth(1, 34)  //
 	table.SetColumnWidth(2, 100) //
@@ -147,13 +141,11 @@ func (view *DeviceList) SetTableView() *fyne.Container {
 	table.SetColumnWidth(4, 150) //
 	table.SetColumnWidth(5, 100) //
 	table.SetColumnWidth(6, 100) //
-
 	//
 	myTableView := container.NewMax(
 		table,
 		NodataMaskView(),
 	)
-
 	return myTableView
 }
 
@@ -214,9 +206,13 @@ func (view *DeviceList) tableSize() (rows int, columns int) {
 
 /**/
 func (view *DeviceList) tableCreateCell() fyne.CanvasObject {
+	label := widget.NewLabel("")
+	label.Wrapping = fyne.TextTruncate
+	label.Alignment = fyne.TextAlignCenter
+
 	c := container.NewMax(
 		widget.NewCheck("", func(ok bool) {}),
-		widget.NewLabel(""),
+		label,
 	)
 	return c
 }

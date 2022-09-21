@@ -140,7 +140,7 @@ func (view *DeviceList) SetTableView() *fyne.Container {
 	table.SetColumnWidth(3, 100) //
 	table.SetColumnWidth(4, 150) //
 	table.SetColumnWidth(5, 100) //
-	table.SetColumnWidth(6, 100) //
+	table.SetColumnWidth(6, 60)  //
 	//
 	myTableView := container.NewMax(
 		table,

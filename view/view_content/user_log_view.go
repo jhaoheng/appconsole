@@ -144,6 +144,7 @@ func (view *UserLog) tableSize() (rows int, columns int) {
 func (view *UserLog) tableCreateCell() fyne.CanvasObject {
 	label := widget.NewLabel("")
 	label.Wrapping = fyne.TextTruncate
+	label.Alignment = fyne.TextAlignCenter
 	c := container.NewMax(
 		label,
 	)

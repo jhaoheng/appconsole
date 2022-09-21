@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"time"
 
 	"fyne.io/fyne/v2"
@@ -31,9 +32,10 @@ type EnvConfig struct {
 	LogFormat logrus.Formatter //
 	LogOutput io.Writer        // log 輸出的位置
 
-	//
+	// path
 	AppPath             string // 應用程式所在位置, 不同 os, 有所不同
 	FyneStorageRootPath string // fyne default root storate path
+	DefaultStoratePath  string // 預設儲存位置, 選擇 AppPath or FyneStorageRootPath
 
 	// database
 	DBSInfo *Database
@@ -63,6 +65,17 @@ func NewConfig(yamldata []byte, resource *embed.FS) *EnvConfig {
 		return parent_dir
 	}()
 	Setting.FyneStorageRootPath = fyne.CurrentApp().Storage().RootURI().Path()
+	Setting.DefaultStoratePath = func() string {
+		switch runtime.GOOS {
+		case "darwin":
+			return Setting.AppPath
+		case "windows":
+			return Setting.FyneStorageRootPath
+		case "linux":
+			return Setting.FyneStorageRootPath
+		}
+		return Setting.FyneStorageRootPath
+	}()
 
 	if Setting.Env == EnvProd {
 		set_prod(Setting)

@@ -7,7 +7,7 @@ import (
 
 func set_prod(conf *EnvConfig) {
 	conf.LogLevel = logrus.InfoLevel
-	conf.LogOutput = SetLogPosition(Setting.AppPath + "/Resources/log")
+	conf.LogOutput = SetLogPosition(Setting.DefaultStoratePath + "/Resources/log")
 	conf.LogFormat = &logrus.TextFormatter{
 		TimestampFormat: "2006-01-02 15:04:05",
 	}

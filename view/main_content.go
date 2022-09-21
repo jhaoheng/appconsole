@@ -12,7 +12,7 @@ import (
 
 var loadPreviousKey = "loadPreviousKey"
 
-var LoginSuccess = make(chan struct{})
+var ShowLoginView = false
 
 // 主畫面
 func MainContainer(myWindow fyne.Window) fyne.CanvasObject {
@@ -89,7 +89,7 @@ func buildLeftCanvas(myWindow fyne.Window, setContent func(v index.ViewInfo), lo
 	logout_btn := widget.NewButton("Logout", func() {
 		myApp := fyne.CurrentApp()
 		myApp.Preferences().SetBool("remember_me", false)
-		myWindow.Close()
+		SwitchLoginView()
 	})
 	info_text := fmt.Sprintf("%v", a.Preferences().String("version"))
 	info := container.NewVBox(
@@ -98,4 +98,20 @@ func buildLeftCanvas(myWindow fyne.Window, setContent func(v index.ViewInfo), lo
 	)
 
 	return container.NewBorder(nil, info, nil, nil, tree)
+}
+
+/**/
+func SwitchLoginView() {
+	myApp := fyne.CurrentApp()
+	main_window := myApp.Driver().AllWindows()[0]
+	login_window := myApp.Driver().AllWindows()[1]
+
+	ShowLoginView = !ShowLoginView
+	if ShowLoginView {
+		main_window.Show()
+		login_window.Hide()
+	} else {
+		main_window.Hide()
+		login_window.Show()
+	}
 }

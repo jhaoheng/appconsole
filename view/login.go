@@ -10,7 +10,6 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-//
 func LoginContent(myWindow fyne.Window) fyne.CanvasObject {
 	myApp := fyne.CurrentApp()
 
@@ -65,7 +64,8 @@ func LoginContent(myWindow fyne.Window) fyne.CanvasObject {
 			if module.NewLogin(name.Text, password.Text).Check() {
 				myApp.Preferences().SetString("login_name", name.Text)
 				myApp.Preferences().SetString("login_email", email.Text)
-				LoginSuccess <- struct{}{}
+				//
+				SwitchLoginView()
 			}
 		},
 		SubmitText: "Login",

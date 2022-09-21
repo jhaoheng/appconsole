@@ -7,7 +7,7 @@ import (
 
 func set_prod(conf *EnvConfig) {
 	conf.LogLevel = logrus.InfoLevel
-	conf.LogOutput = SetLogPosition("./log")
+	conf.LogOutput = SetLogPosition(Setting.AppContentsPath + "/Resources/log")
 	conf.LogFormat = &logrus.TextFormatter{
 		TimestampFormat: "2006-01-02 15:04:05",
 	}
@@ -27,8 +27,8 @@ func set_prod(conf *EnvConfig) {
 */
 func SetLogPosition(filename string) *lumberjack.Logger {
 	l := &lumberjack.Logger{
-		Filename:   filename,
-		MaxSize:    10, // megabytes
+		Filename:   filename, // absolute path
+		MaxSize:    10,       // megabytes
 		MaxBackups: 10,
 		MaxAge:     30,    //days
 		Compress:   false, // disabled by default

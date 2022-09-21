@@ -3,8 +3,11 @@ package config
 import (
 	"embed"
 	"io"
+	"os"
+	"path/filepath"
 	"time"
 
+	"fyne.io/fyne/v2"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v3"
 )
@@ -28,6 +31,10 @@ type EnvConfig struct {
 	LogFormat logrus.Formatter //
 	LogOutput io.Writer        // log 輸出的位置
 
+	//
+	AppContentsPath     string
+	FyneStorageRootPath string
+
 	// database
 	DBSInfo *Database
 
@@ -49,6 +56,13 @@ func NewConfig(yamldata []byte, resource *embed.FS) *EnvConfig {
 	}
 	Setting.Resource = resource
 	Setting.BuildTime = time.Now().Format("2006-01-02 15:04:05")
+	Setting.AppContentsPath = func() string {
+		execute_binary, _ := os.Executable()
+		dir := filepath.Dir(execute_binary)
+		parent_dir := filepath.Dir(dir)
+		return parent_dir
+	}()
+	Setting.FyneStorageRootPath = fyne.CurrentApp().Storage().RootURI().Path()
 
 	if Setting.Env == EnvProd {
 		set_prod(Setting)
@@ -63,4 +77,6 @@ func (c *EnvConfig) Show() {
 	logrus.Infof("commit_code: %v", Setting.CommitCode)
 	logrus.Infof("version: %v", Setting.BuildVersion)
 	logrus.Infof("build_time: %v", Setting.BuildTime)
+	logrus.Infof("app_path: %v", Setting.AppContentsPath)
+	logrus.Infof("fyne_storage_root_path: %v", Setting.FyneStorageRootPath)
 }

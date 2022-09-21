@@ -30,6 +30,12 @@ var (
 var myApp fyne.App
 
 func init() {
+	/*
+		- 必須最早執行 NewWithID()
+		- 才能讀取得到系統資訊, ex: 儲存 log 的位置, metadata 等資訊
+	*/
+	myApp = app.NewWithID("app.console.demo")
+	//
 	b, err := env.ReadFile("env.yaml")
 	if err != nil {
 		panic(err)
@@ -44,8 +50,8 @@ func init() {
 
 func main() {
 	//
-	myApp = app.New()
-	myApp = app.NewWithID("app.console.demo")
+	// myApp = app.New()
+	// myApp = app.NewWithID("app.console.demo")
 	//
 	makeTray(myApp)
 	logLifecycle(myApp)

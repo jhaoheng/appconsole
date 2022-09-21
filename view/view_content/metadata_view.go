@@ -3,9 +3,12 @@ package view_content
 import (
 	"appconsole/config"
 	"fmt"
+	"image/color"
 
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -41,14 +44,21 @@ func NewMetaData() *Metadata {
 
 func (obj *Metadata) makeui() {
 
-	obj.UI = container.NewAdaptiveGrid(
-		1,
-		container.NewBorder(
-			nil, nil, nil, nil,
-			obj.SetFormView(),
-		),
-	)
+	block := func(size fyne.Size) *canvas.Raster {
+		tmp := canvas.NewRasterWithPixels(func(x int, y int, w int, h int) color.Color {
+			return theme.BackgroundColor()
+		})
+		tmp.SetMinSize(size)
+		return tmp
+	}
 
+	data := container.NewBorder(
+		block(fyne.NewSize(0, 50)), nil, block(fyne.NewSize(50, 0)), nil,
+		obj.SetFormView(),
+	)
+	data.Resize(fyne.NewSize(800, 50))
+
+	obj.UI = container.NewWithoutLayout(data)
 }
 
 func (obj *Metadata) SetFormView() *widget.Form {

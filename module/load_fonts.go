@@ -18,7 +18,7 @@ var JapaneseFonts = map[string]bool{}
 
 // for chinese word
 func LoadFont() {
-	defaultFontPath := "resources/fonts/STHeiti Light.ttc"
+	defaultFontPath := ""
 
 	// load from system
 	for _, path := range findfont.List() {

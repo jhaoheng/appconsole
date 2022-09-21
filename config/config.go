@@ -32,8 +32,8 @@ type EnvConfig struct {
 	LogOutput io.Writer        // log 輸出的位置
 
 	//
-	AppContentsPath     string
-	FyneStorageRootPath string
+	AppPath             string // 應用程式所在位置, 不同 os, 有所不同
+	FyneStorageRootPath string // fyne default root storate path
 
 	// database
 	DBSInfo *Database
@@ -56,7 +56,7 @@ func NewConfig(yamldata []byte, resource *embed.FS) *EnvConfig {
 	}
 	Setting.Resource = resource
 	Setting.BuildTime = time.Now().Format("2006-01-02 15:04:05")
-	Setting.AppContentsPath = func() string {
+	Setting.AppPath = func() string {
 		execute_binary, _ := os.Executable()
 		dir := filepath.Dir(execute_binary)
 		parent_dir := filepath.Dir(dir)
@@ -77,6 +77,6 @@ func (c *EnvConfig) Show() {
 	logrus.Infof("commit_code: %v", Setting.CommitCode)
 	logrus.Infof("version: %v", Setting.BuildVersion)
 	logrus.Infof("build_time: %v", Setting.BuildTime)
-	logrus.Infof("app_path: %v", Setting.AppContentsPath)
+	logrus.Infof("app_path: %v", Setting.AppPath)
 	logrus.Infof("fyne_storage_root_path: %v", Setting.FyneStorageRootPath)
 }

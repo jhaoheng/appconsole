@@ -30,12 +30,17 @@ var (
 var myApp fyne.App
 
 func init() {
+	// 字型要最早讀取, 必須比 app.New() 早, 否則會讀取不到字型
+	module.LoadFont()
+
 	/*
-		- 必須最早執行 NewWithID()
+		- 必須早執行 NewWithID()
 		- 才能讀取得到系統資訊, ex: 儲存 log 的位置, metadata 等資訊
+		- 因為這邊的 conf, 有儲存系統資訊
 	*/
 	myApp = app.NewWithID("app.console.demo")
-	//
+
+	// 讀取自定義環境變數
 	b, err := env.ReadFile("env.yaml")
 	if err != nil {
 		panic(err)
@@ -44,14 +49,10 @@ func init() {
 	//
 	conf := config.NewConfig(b, &resource)
 	module.SetLog(conf)
-	module.LoadFont()
 	conf.Show()
 }
 
 func main() {
-	//
-	// myApp = app.New()
-	// myApp = app.NewWithID("app.console.demo")
 	//
 	makeTray(myApp)
 	logLifecycle(myApp)

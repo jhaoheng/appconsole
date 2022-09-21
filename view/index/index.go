@@ -20,6 +20,11 @@ var (
 			Intro: "",
 			View:  viewcontent.WelcomeView,
 		},
+		"metadata": {
+			Title: "Metadata",
+			Intro: "The information of application.",
+			View:  viewcontent.MetadataView,
+		},
 		"device": {
 			Title: "Device",
 			Intro: "",
@@ -35,26 +40,11 @@ var (
 			Intro: "",
 			View:  viewcontent.UserLogView,
 		},
-		"advanced": {
-			Title: "Advanced",
-			Intro: "",
-			View:  nil,
-		},
-		"one": {
-			Title: "Advanced",
-			Intro: "",
-			View:  nil,
-		},
-		"two": {
-			Title: "Advanced",
-			Intro: "",
-			View:  nil,
-		},
 	}
 
 	// ViewIndex  defines how our view should be laid out in the index tree
 	ViewIndex = map[string][]string{
-		"":         {"welcome", "device", "user", "log", "advanced"},
-		"advanced": {"one", "two"},
+		"":        {"welcome", "device", "user", "log"},
+		"welcome": {"metadata"},
 	}
 )

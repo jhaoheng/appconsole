@@ -28,6 +28,8 @@ func MainContainer(myWindow fyne.Window) fyne.CanvasObject {
 			presentContent.ContentIntro.SetText(v.Intro)
 			if len(v.Intro) == 0 {
 				presentContent.ContentIntro.Hide()
+			} else {
+				presentContent.ContentIntro.Show()
 			}
 			if v.View != nil {
 				presentContent.Content.Objects = []fyne.CanvasObject{v.View(myWindow)}

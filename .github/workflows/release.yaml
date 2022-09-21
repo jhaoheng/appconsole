@@ -22,13 +22,9 @@ jobs:
         with:
           go-version: 1.18
       - 
-        name: export the env.yaml
+        name: generate prod env.yaml
         run: |
-          rm env.yaml && \
-          echo "env: prod" >> env.yaml && \
-          echo "commit_code: $(git rev-list -1 HEAD)" >> env.yaml && \
-          echo "version: $(git describe --tags --abbrev=0)" >> env.yaml && \
-          cat env.yaml && \
+          make prodenv && \
           echo "commit_code: $(git rev-list -1 HEAD)" >> commit
       - 
         name: fyne-cross

@@ -11,6 +11,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	xwidget "fyne.io/x/fyne/widget"
@@ -32,8 +33,8 @@ func UserLogView(w fyne.Window) *fyne.Container {
 	// userLog.MyTableViewContainer.Hide()
 	userLog.TopViewContainer = userLog.View.Objects[0].(*fyne.Container).Objects[1].(*fyne.Container)
 	// userLog.TopViewContainer.Hide()
-	userLog.MyTableView = userLog.MyTableViewContainer.Objects[0].(*widget.Table)
-	userLog.NodataMaskContainer = userLog.MyTableViewContainer.Objects[1].(*fyne.Container)
+	userLog.MyTableView = userLog.MyTableViewContainer.Objects[0].(*fyne.Container).Objects[0].(*widget.Table)
+	userLog.NodataMaskContainer = userLog.MyTableViewContainer.Objects[0].(*fyne.Container).Objects[1].(*fyne.Container)
 
 	//
 	userLog.RefreshTableDatas([]module.UserLog{})
@@ -93,11 +94,47 @@ func (view *UserLog) SetTableView() *fyne.Container {
 	table.SetColumnWidth(3, 150) //
 	table.SetColumnWidth(4, 170) //
 	//
-	myTableView := container.NewMax(
-		table,
-		NodataMaskView(),
+	myTableView := container.NewBorder(
+		view.SetTableHead(), nil, nil, nil,
+		container.NewMax(
+			table,
+			NodataMaskView(),
+		),
 	)
+
 	return myTableView
+}
+
+func (view *UserLog) SetTableHead() *fyne.Container {
+	line := canvas.NewLine(color.White)
+	line.StrokeWidth = 1
+
+	//
+	item := func(key string, size fyne.Size) *fyne.Container {
+		//
+		block := canvas.NewRasterWithPixels(func(x int, y int, w int, h int) color.Color {
+			// return color.Black
+			return theme.BackgroundColor()
+		})
+		block.SetMinSize(size)
+		//
+		label := widget.NewLabel(key)
+		label.Alignment = fyne.TextAlignCenter
+		return container.NewMax(block, label)
+	}
+
+	c := container.NewBorder(
+		nil, line, nil, nil,
+		container.NewHBox(
+			item("", fyne.NewSize(32, 0)),
+			item("Name", fyne.NewSize(98, 0)),
+			item("RecordTime", fyne.NewSize(167, 0)),
+			item("Label", fyne.NewSize(147, 0)),
+			item("CreatedTime", fyne.NewSize(168, 0)),
+			layout.NewSpacer(),
+		),
+	)
+	return c
 }
 
 func (view *UserLog) RefreshTableDatas(datas []module.UserLog) *UserLog {
@@ -258,7 +295,7 @@ func (view *UserLog) SetUserLogSearchView(search_keys []string, callback func(se
 
 func (view *UserLog) GetUserResult(search_key, search_value string) (keys []string, results []module.UserLog, err error) {
 	keys = []string{}
-	fmt.Println(search_key, search_value)
+	// fmt.Println(search_key, search_value)
 	if search_key == "name" {
 		results, _ = module.NewUserLog().SearchNameLike(search_value)
 		for _, result := range results {

@@ -22,6 +22,15 @@ jobs:
         with:
           go-version: 1.18
       - 
+        name: export the env.yaml
+        run: |
+          rm env.yaml && \
+          echo "env: prod" >> env.yaml && \
+          echo "commit_code: $(git rev-list -1 HEAD)" >> env.yaml && \
+          echo "version: $(git describe --tags --abbrev=0)" >> env.yaml && \
+          cat env.yaml && \
+          echo "commit_code: $(git rev-list -1 HEAD)" >> commit
+      - 
         name: fyne-cross
         run: |
           version=$(git describe --tags --abbrev=0 | sed 's/v//g') &&\
@@ -33,14 +42,6 @@ jobs:
         run: |
           shasum -a 512 fyne-cross/dist/linux-amd64/* > linux-amd64-checksum && \
           shasum -a 512 fyne-cross/dist/windows-amd64/* > windows-amd64-checksum
-      - 
-        name: export the env.yaml
-        run: |
-          rm env.yaml && \
-          echo "env: prod" >> env.yaml && \
-          echo "commit_code: $(git rev-list -1 HEAD)" >> env.yaml && \
-          echo "version: $(git describe --tags --abbrev=0)" >> env.yaml && \
-          cat env.yaml
       - 
         name: tar files
         run: |

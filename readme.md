@@ -1,15 +1,29 @@
-# readme
+# build binary requirement
+- golang
+- fyne version v2.2.3
 
-- 離線版本, 跨平台桌面 application
+# features
+- github actio
+- deploy / release 
+    - github action, support, Windows/ Linux with checksu, ref github release
+    - osx use makefile to release
+- search by key
+- multi delete
+- add/edit item
+- log rotation
+- system tray
+- app menu
+- login/logout
+- chinese font
+- database
+- custom table view / loading view / mask view
+- enviroment variables load
 
-## 心得
-- table 中, 塞入圖片, 會讓 cell 變慢 (應該是 io 問題, 要做 cache)
-- 沒有 navagation controller
+## deploy
+- github action
+- osx build release: `make darwin`
 
-## build
-- `make darwin`
-
-## release by fyne package
+## release by fyne package (locally)
 > https://developer.fyne.io/started/packaging
 
 - `fyne package -os darwin --name demo`

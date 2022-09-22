@@ -5,7 +5,6 @@
 - fyne version v2.2.3
 
 # features
-- github actio
 - deploy / release 
     - github action, support, Windows/ Linux with checksu, ref github release
     - osx use makefile to release
@@ -23,7 +22,7 @@
 - desktop notification
 
 ## deploy
-- github action
+- github action support windows/linux
 - osx build release: `make darwin`
 
 ## release by fyne package (locally)

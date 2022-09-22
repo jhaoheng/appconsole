@@ -89,7 +89,7 @@ func buildLeftCanvas(myWindow fyne.Window, setContent func(v index.ViewInfo), lo
 	logout_btn := widget.NewButton("Logout", func() {
 		myApp := fyne.CurrentApp()
 		myApp.Preferences().SetBool("remember_me", false)
-		SwitchLoginView()
+		SwitchLoginView(false, true)
 	})
 	info_text := fmt.Sprintf("%v", a.Preferences().String("version"))
 	info := container.NewVBox(
@@ -101,17 +101,20 @@ func buildLeftCanvas(myWindow fyne.Window, setContent func(v index.ViewInfo), lo
 }
 
 /**/
-func SwitchLoginView() {
+func SwitchLoginView(openMainWin bool, openLoginWin bool) {
 	myApp := fyne.CurrentApp()
 	main_window := myApp.Driver().AllWindows()[0]
 	login_window := myApp.Driver().AllWindows()[1]
 
-	ShowLoginView = !ShowLoginView
-	if ShowLoginView {
+	if openMainWin {
 		main_window.Show()
-		login_window.Hide()
 	} else {
 		main_window.Hide()
+	}
+
+	if openLoginWin {
 		login_window.Show()
+	} else {
+		login_window.Hide()
 	}
 }

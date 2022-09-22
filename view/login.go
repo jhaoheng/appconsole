@@ -65,7 +65,7 @@ func LoginContent(myWindow fyne.Window) fyne.CanvasObject {
 				myApp.Preferences().SetString("login_name", name.Text)
 				myApp.Preferences().SetString("login_email", email.Text)
 				//
-				SwitchLoginView()
+				SwitchLoginView(true, false)
 			}
 		},
 		SubmitText: "Login",

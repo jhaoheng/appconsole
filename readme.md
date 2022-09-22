@@ -48,3 +48,6 @@
 
 ## metadata 
 ![metadata](./resources/readme/5.png)
+
+## log
+![log](./resources/readme/6.png)

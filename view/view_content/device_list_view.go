@@ -11,6 +11,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"github.com/sirupsen/logrus"
@@ -29,8 +30,9 @@ func DeviceListView(win fyne.Window) *fyne.Container {
 	// deviceList.MyTableViewContainer.Hide()
 	deviceList.TopViewContainer = deviceList.DeviceListView.Objects[0].(*fyne.Container).Objects[1].(*fyne.Container)
 	// deviceList.TopViewContainer.Hide()
-	deviceList.MyTableView = deviceList.MyTableViewContainer.Objects[0].(*widget.Table)
-	deviceList.NodataMaskContainer = deviceList.MyTableViewContainer.Objects[1].(*fyne.Container)
+	deviceList.MyTableView = deviceList.MyTableViewContainer.Objects[0].(*fyne.Container).Objects[0].(*widget.Table)
+	//
+	deviceList.NodataMaskContainer = deviceList.MyTableViewContainer.Objects[0].(*fyne.Container).Objects[1].(*fyne.Container)
 	// deviceList.NodataMaskContainer.Hide()
 
 	//
@@ -139,14 +141,51 @@ func (view *DeviceList) SetTableView() *fyne.Container {
 	table.SetColumnWidth(2, 100) //
 	table.SetColumnWidth(3, 100) //
 	table.SetColumnWidth(4, 150) //
-	table.SetColumnWidth(5, 100) //
+	table.SetColumnWidth(5, 125) //
 	table.SetColumnWidth(6, 60)  //
 	//
-	myTableView := container.NewMax(
-		table,
-		NodataMaskView(),
+	myTableView := container.NewBorder(
+		view.SetTableHead(), nil, nil, nil,
+		container.NewMax(
+			table,
+			NodataMaskView(),
+		),
 	)
 	return myTableView
+}
+
+func (view *DeviceList) SetTableHead() *fyne.Container {
+	line := canvas.NewLine(color.White)
+	line.StrokeWidth = 1
+
+	//
+	item := func(key string, size fyne.Size) *fyne.Container {
+		//
+		block := canvas.NewRasterWithPixels(func(x int, y int, w int, h int) color.Color {
+			// return color.Black
+			return theme.BackgroundColor()
+		})
+		block.SetMinSize(size)
+		//
+		label := widget.NewLabel(key)
+		label.Alignment = fyne.TextAlignCenter
+		return container.NewMax(block, label)
+	}
+
+	c := container.NewBorder(
+		nil, line, nil, nil,
+		container.NewHBox(
+			item("", fyne.NewSize(32, 0)),
+			item("", fyne.NewSize(32, 0)),
+			item("Name", fyne.NewSize(97, 0)),
+			item("IP", fyne.NewSize(97, 0)),
+			item("MacAddress", fyne.NewSize(147, 0)),
+			item("DeviceSerialID", fyne.NewSize(97, 0)),
+			item("Status", fyne.NewSize(57, 0)),
+			layout.NewSpacer(),
+		),
+	)
+	return c
 }
 
 func (view *DeviceList) RefreshTableDatas() *DeviceList {

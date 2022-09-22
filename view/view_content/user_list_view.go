@@ -14,6 +14,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	xwidget "fyne.io/x/fyne/widget"
@@ -34,8 +35,8 @@ func UserListView(win fyne.Window) *fyne.Container {
 	// userList.MyTableViewContainer.Hide()
 	userList.TopViewContainer = userList.View.Objects[0].(*fyne.Container).Objects[1].(*fyne.Container)
 	// userList.TopViewContainer.Hide()
-	userList.MyTableView = userList.MyTableViewContainer.Objects[0].(*widget.Table)
-	userList.NodataMaskContainer = userList.MyTableViewContainer.Objects[1].(*fyne.Container)
+	userList.MyTableView = userList.MyTableViewContainer.Objects[0].(*fyne.Container).Objects[0].(*widget.Table)
+	userList.NodataMaskContainer = userList.MyTableViewContainer.Objects[0].(*fyne.Container).Objects[1].(*fyne.Container)
 
 	//
 	userList.RefreshTableDatas([]module.User{})
@@ -124,11 +125,47 @@ func (view *UserList) SetTableView() *fyne.Container {
 	table.SetColumnWidth(5, 80)  //
 	table.SetColumnWidth(6, 60)  //
 	//
-	myTableView := container.NewMax(
-		table,
-		NodataMaskView(),
+	myTableView := container.NewBorder(
+		view.SetTableHead(), nil, nil, nil,
+		container.NewMax(
+			table,
+			NodataMaskView(),
+		),
 	)
 	return myTableView
+}
+
+func (view *UserList) SetTableHead() *fyne.Container {
+	line := canvas.NewLine(color.White)
+	line.StrokeWidth = 1
+
+	//
+	item := func(key string, size fyne.Size) *fyne.Container {
+		//
+		block := canvas.NewRasterWithPixels(func(x int, y int, w int, h int) color.Color {
+			// return color.Black
+			return theme.BackgroundColor()
+		})
+		block.SetMinSize(size)
+		//
+		label := widget.NewLabel(key)
+		label.Alignment = fyne.TextAlignCenter
+		return container.NewMax(block, label)
+	}
+
+	c := container.NewBorder(
+		nil, line, nil, nil,
+		container.NewHBox(
+			item("", fyne.NewSize(32, 0)),
+			item("", fyne.NewSize(32, 0)),
+			item("MemberID", fyne.NewSize(317, 0)),
+			item("Name", fyne.NewSize(97, 0)),
+			item("Phone", fyne.NewSize(107, 0)),
+			item("Gender", fyne.NewSize(77, 0)),
+			layout.NewSpacer(),
+		),
+	)
+	return c
 }
 
 func (view *UserList) RefreshTableDatas(user_datas []module.User) *UserList {

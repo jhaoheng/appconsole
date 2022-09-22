@@ -20,6 +20,7 @@
 - database
 - custom table view / loading view / mask view
 - enviroment variables load
+- desktop notification
 
 ## deploy
 - github action
@@ -31,3 +32,20 @@
 - `fyne package -os darwin --name demo`
 - `fyne package -os linux --name demo`
 - `fyne package -os windows --name demo`
+
+# screenshot
+
+## login
+![login](./resources/readme/1.png)
+
+## device 
+![device_view](./resources/readme/2.png)
+
+## user 
+![user_view](./resources/readme/3.png)
+
+## edit user 
+![user_edit](./resources/readme/4.png)
+
+## metadata 
+![metadata](./resources/readme/5.png)

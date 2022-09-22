@@ -1,3 +1,5 @@
+[![staticcheck](https://github.com/jhaoheng/appconsole/actions/workflows/staticcheck.yml/badge.svg?branch=master)](https://github.com/jhaoheng/appconsole/actions/workflows/staticcheck.yml)
+
 # build binary requirement
 - golang
 - fyne version v2.2.3

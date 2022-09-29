@@ -17,11 +17,10 @@ func MakeMenu(a fyne.App, w fyne.Window) *fyne.MainMenu {
 		file.Items = append(
 			file.Items,
 			fyne.NewMenuItemSeparator(),
-			build_settings_item(a, w),
-			build_preferences_item(a, w),
 		)
 	}
 	main := fyne.NewMainMenu(
+		fyne.NewMenu("hello", build_settings_item(a, w), build_preferences_item(a, w)),
 		file,
 		build_edit(w),
 		build_help(a),

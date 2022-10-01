@@ -230,7 +230,7 @@ func (view *UserList) tableCreateCell() fyne.CanvasObject {
 	label.Wrapping = fyne.TextTruncate
 	label.Alignment = fyne.TextAlignCenter
 	//
-	editBtn := widget.NewButton("edit", func() {})
+	editBtn := widget.NewButtonWithIcon("", theme.DocumentCreateIcon(), func() {})
 	editBtn.Hide()
 	//
 	c := container.NewMax(
